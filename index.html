@@ -146,11 +146,20 @@ const SEED_PRODUCTS = [
   { m: "Ajax", n: "MotionProtect", lc: "Détecteur de mouvement intérieur", cat: "alarme", ref: 90.11, img: "https://ajax.systems/api/cdn-img/?img=%2Fupload%2Fmp_xl_93d1779d25%402.jpg" },
   { m: "Ajax", n: "MotionProtect Plus", lc: "Détecteur de mouvement immunité animaux", cat: "alarme", ref: 118.0, img: "https://ajax.systems/api/cdn-img/?img=%2Fupload%2Fmp_xl_93d1779d25%402.jpg" },
   { m: "Ajax", n: "MotionCam", lc: "Détecteur de mouvement avec levée de doute photo", cat: "alarme", ref: 132.0 },
+  { m: "Ajax", n: "MotionCam (PhOD)", lc: "Détecteur photo avec prise de vue à la demande", cat: "alarme", ref: 155.0 },
   { m: "Ajax", n: "MotionCam Outdoor", lc: "Détecteur extérieur avec levée de doute photo", cat: "alarme", ref: 383.51 },
+  { m: "Ajax", n: "MotionCam Outdoor (PhOD)", lc: "Détecteur extérieur photo à la demande", cat: "alarme", ref: 420.0 },
+  { m: "Ajax", n: "MotionProtect Outdoor", lc: "Détecteur de mouvement extérieur anti-masquage", cat: "alarme", ref: 265.0 },
+  { m: "Ajax", n: "DualCurtain Outdoor", lc: "Détecteur rideau extérieur bidirectionnel", cat: "alarme", ref: 250.0 },
+  { m: "Ajax", n: "CombiProtect", lc: "Détecteur mouvement + bris de vitre combiné", cat: "alarme", ref: 96.0 },
   { m: "Ajax", n: "DoorProtect Plus", lc: "Détecteur d'ouverture + vibration + inclinaison", cat: "alarme", ref: 79.73 },
   { m: "Ajax", n: "DoorProtect", lc: "Détecteur d'ouverture", cat: "alarme", ref: 46.0 },
   { m: "Ajax", n: "KeyPad Plus", lc: "Clavier tactile avec lecteur de badge", cat: "alarme", ref: 180.11 },
+  { m: "Ajax", n: "KeyPad TouchScreen", lc: "Clavier écran tactile avec lecteur de badge", cat: "alarme", ref: 285.0 },
+  { m: "Ajax", n: "Button", lc: "Bouton panique / appel d'urgence", cat: "alarme", ref: 36.0 },
+  { m: "Ajax", n: "DoubleButton", lc: "Bouton panique double sécurité anti-fausse alerte", cat: "alarme", ref: 42.0 },
   { m: "Ajax", n: "StreetSiren", lc: "Sirène extérieure avec flash", cat: "alarme", ref: 176.73 },
+  { m: "Ajax", n: "StreetSiren DoubleDeck", lc: "Sirène extérieure avec panneau lumineux personnalisable", cat: "alarme", ref: 205.0 },
   { m: "Ajax", n: "HomeSiren", lc: "Sirène intérieure", cat: "alarme", ref: 62.0 },
   { m: "Ajax", n: "ReX 2", lc: "Répéteur de portée radio", cat: "alarme", ref: 256.38 },
   { m: "Ajax", n: "FireProtect 2", lc: "Détecteur fumée + chaleur", cat: "incendie", ref: 105.04 },
@@ -158,18 +167,31 @@ const SEED_PRODUCTS = [
   { m: "Ajax", n: "SpaceControl", lc: "Télécommande 4 boutons", cat: "alarme", ref: 45.04 },
   { m: "Ajax", n: "Pass / Badge", lc: "Badge d'armement sans contact", cat: "alarme", ref: 84.31, img: "https://ajax.systems/api/cdn-img/?img=%2Fupload%2Fpass_5c971501a7%402.png" },
   { m: "Ajax", n: "GlassProtect", lc: "Détecteur de bris de vitre", cat: "alarme", ref: 58.0 },
+  { m: "Ajax", n: "MultiTransmitter", lc: "Module d'intégration détecteurs filaires", cat: "alarme", ref: 138.0 },
+  { m: "Ajax", n: "WaterStop 3/4\"", lc: "Vanne d'eau motorisée anti-fuite", cat: "alarme", ref: 185.0 },
+  { m: "Ajax", n: "Socket", lc: "Prise connectée avec mesure de consommation", cat: "alarme", ref: 78.0 },
+  { m: "Ajax", n: "Relay", lc: "Relais contact sec pilotage à distance", cat: "alarme", ref: 56.0 },
+  { m: "Ajax", n: "WallSwitch", lc: "Module encastré pilotage électrique", cat: "alarme", ref: 66.0 },
+  { m: "Ajax", n: "LifeQuality", lc: "Capteur qualité d'air CO2, température, humidité", cat: "alarme", ref: 178.0 },
   // DAHUA — vidéosurveillance (best-sellers marché)
   { m: "Dahua", n: "IPC-HFW2849S-S-IL", lc: "Caméra tube 8MP vision nocturne couleur", cat: "video", ref: 109.0 },
   { m: "Dahua", n: "IPC-HFW2449S-S-IL", lc: "Caméra tube 4MP double éclairage", cat: "video", ref: 70.0 },
-  { m: "Dahua", n: "IPC-HDW3849H-AS-PV", lc: "Caméra dôme 8MP dissuasion active TiOC", cat: "video", ref: 189.0 },
+  { m: "Dahua", n: "IPC-HDW3849H-AS-PV", lc: "Caméra dôme 8MP dissuasion active TiOC", cat: "video", ref: 249.0 },
+  { m: "Dahua", n: "IPC-HDW3449H-AS-PV", lc: "Caméra dôme 4MP dissuasion active TiOC", cat: "video", ref: 189.0 },
+  { m: "Dahua", n: "IPC-HFW3849T1-AS-PV", lc: "Caméra tube 8MP dissuasion active TiOC", cat: "video", ref: 259.0 },
+  { m: "Dahua", n: "IPC-HFW2541T-S-IL", lc: "Caméra tube 5MP double éclairage", cat: "video", ref: 95.0 },
+  { m: "Dahua", n: "IPC-HDBW2441E-S", lc: "Caméra dôme antivandale 4MP", cat: "video", ref: 125.0 },
   { m: "Dahua", n: "IPC-HDW2449T-S-IL", lc: "Caméra dôme 4MP double éclairage", cat: "video", ref: 75.0 },
   { m: "Dahua", n: "IPC-HDW2849T-S-IL", lc: "Caméra dôme 8MP double éclairage", cat: "video", ref: 139.0 },
   { m: "Dahua", n: "SD49425XB-HNR", lc: "Caméra motorisée PTZ 4MP zoom x25", cat: "video", ref: 599.0 },
+  { m: "Dahua", n: "SD3A400-GN-HI-A-PV", lc: "Caméra PTZ compacte 4MP avec dissuasion", cat: "video", ref: 245.0 },
   { m: "Dahua", n: "NVR2108HS-8P-S3", lc: "Enregistreur 8 voies 4K avec PoE", cat: "video", ref: 184.0 },
   { m: "Dahua", n: "NVR2116HS-S3", lc: "Enregistreur 16 voies 4K", cat: "video", ref: 280.0 },
+  { m: "Dahua", n: "NVR4216-16P-4KS2", lc: "Enregistreur 16 voies 4K avec PoE intégré", cat: "video", ref: 430.0 },
   { m: "Dahua", n: "Switch PoE 8 ports", lc: "Switch réseau PoE 8 ports", cat: "video", ref: 109.0 },
   { m: "Dahua", n: "WD Purple 2 To", lc: "Disque dur vidéosurveillance 2 To", cat: "video", ref: 80.0 },
   { m: "Dahua", n: "WD Purple 4 To", lc: "Disque dur vidéosurveillance 4 To", cat: "video", ref: 130.0 },
+  { m: "Dahua", n: "WD Purple 6 To", lc: "Disque dur vidéosurveillance 6 To", cat: "video", ref: 165.0 },
   { m: "Dahua", n: "VTO2202F-P", lc: "Platine de rue interphone vidéo", cat: "interphonie", ref: 160.0 },
   { m: "Dahua", n: "VTH2421FW-P", lc: "Moniteur intérieur interphone 7 pouces", cat: "interphonie", ref: 139.0 },
   // PRESTATIONS
@@ -387,14 +409,20 @@ function App() {
   /* ---------- Chargement initial ---------- */
   useEffect(() => {
     (async () => {
-      const seeded = SEED_PRODUCTS.map((p) => ({ id: uid(), ...p, photo: null, actif: true }));
+      const seeded = SEED_PRODUCTS.map((p) => ({ id: uid() + Math.random().toString(36).slice(2, 5), ...p, photo: p.photo || null, actif: true }));
       const [cat, qts, jnl, stg] = await Promise.all([
         loadKey(KEYS.catalog, null),
         loadKey(KEYS.quotes, []),
         loadKey(KEYS.journal, []),
         loadKey(KEYS.settings, null),
       ]);
-      setCatalog(cat || seeded);
+      // Fusion : on garde le catalogue existant (avec ses photos et modifs) et on ajoute uniquement les nouveaux produits de base
+      let mergedCat = cat || seeded;
+      if (cat) {
+        const news = seeded.filter((s) => !cat.some((c) => c.m === s.m && c.n === s.n));
+        if (news.length) mergedCat = [...cat, ...news];
+      }
+      setCatalog(mergedCat);
       setQuotes(qts);
       setJournal(jnl);
       setSettings(stg ? { ...DEFAULT_SETTINGS, ...stg } : DEFAULT_SETTINGS);
@@ -547,7 +575,7 @@ function App() {
   return (
     <div className="min-h-screen" style={{ background: C.cream, color: C.navy, maxWidth: 480, margin: "0 auto", position: "relative", paddingBottom: 90 }}>
       {/* ---------- HEADER ---------- */}
-      <header className="flex items-center justify-between px-4 pt-4 pb-3 sticky top-0 z-30" style={{ background: C.navy }}>
+      <header className="flex items-center justify-between px-4 pb-3 sticky top-0 z-30" style={{ background: C.navy, paddingTop: "calc(14px + env(safe-area-inset-top))" }}>
         <div>
           <div style={{ ...serif, color: C.cream, fontSize: 20, fontWeight: 700, lineHeight: 1 }}>FOLONEO</div>
           <div style={{ color: C.gold, fontSize: 10, letterSpacing: "0.25em", marginTop: 3 }}>DEVIS TERRAIN</div>
@@ -716,7 +744,7 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
     <div className="px-4 pt-4">
       <div className="flex items-center justify-between mb-3">
         <button onClick={onBack} className="flex items-center gap-1" style={{ color: C.orange, fontWeight: 700, fontSize: 15 }}>
-          <ChevronLeft size={20} /> Devis
+          <ChevronLeft size={20} /> Retour
         </button>
         <div className="flex gap-2">
           <Btn variant="ghost" small onClick={onDuplicate}><Copy size={15} /></Btn>
@@ -829,8 +857,11 @@ function ProductPicker({ catalog, settings, onClose, onAdd }) {
     .filter((p) => (p.n + p.lc + p.m).toLowerCase().includes(search.toLowerCase()));
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ background: C.cream, maxWidth: 480, margin: "0 auto" }}>
-      <div className="flex items-center justify-between px-4 py-4" style={{ background: C.navy }}>
-        <span style={{ ...serif, color: C.cream, fontSize: 18, fontWeight: 700 }}>Ajouter des produits</span>
+      <div className="flex items-center justify-between px-4 pb-4" style={{ background: C.navy, paddingTop: "calc(16px + env(safe-area-inset-top))" }}>
+        <button onClick={onClose} className="flex items-center gap-1" style={{ color: C.gold, fontWeight: 700, fontSize: 15 }}>
+          <ChevronLeft size={22} /> Retour
+        </button>
+        <span style={{ ...serif, color: C.cream, fontSize: 17, fontWeight: 700 }}>Ajouter des produits</span>
         <button onClick={onClose} style={{ color: C.gold }}><X size={24} /></button>
       </div>
       <div className="px-4 pt-3">
@@ -972,8 +1003,11 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto" style={{ background: C.cream, maxWidth: 480, margin: "0 auto" }}>
-      <div className="flex items-center justify-between px-4 py-4 sticky top-0" style={{ background: C.navy }}>
-        <span style={{ ...serif, color: C.cream, fontSize: 18, fontWeight: 700 }}>{product ? "Modifier le produit" : "Nouveau produit"}</span>
+      <div className="flex items-center justify-between px-4 pb-4 sticky top-0 z-10" style={{ background: C.navy, paddingTop: "calc(16px + env(safe-area-inset-top))" }}>
+        <button onClick={onClose} className="flex items-center gap-1" style={{ color: C.gold, fontWeight: 700, fontSize: 15 }}>
+          <ChevronLeft size={22} /> Retour
+        </button>
+        <span style={{ ...serif, color: C.cream, fontSize: 17, fontWeight: 700 }}>{product ? "Modifier le produit" : "Nouveau produit"}</span>
         <button onClick={onClose} style={{ color: C.gold }}><X size={24} /></button>
       </div>
       <div className="px-4 py-4">
@@ -1139,12 +1173,14 @@ function ClientPresentation({ quote, settings, onClose }) {
   const [option, setOption] = useState("psge");
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto" style={{ background: C.navy, maxWidth: 480, margin: "0 auto", color: C.cream }}>
-      <div className="flex items-center justify-between px-5 pt-5">
-        <div>
-          <div style={{ ...serif, fontSize: 22, fontWeight: 700 }}>FOLONEO</div>
-          <div style={{ color: C.gold, fontSize: 10, letterSpacing: "0.25em", marginTop: 2 }}>ON VEILLE, VOUS DORMEZ.</div>
+      <div className="flex items-center justify-between px-5" style={{ paddingTop: "calc(18px + env(safe-area-inset-top))" }}>
+        <button onClick={onClose} className="flex items-center gap-1" style={{ color: C.gold, fontWeight: 700, fontSize: 15 }}>
+          <ChevronLeft size={22} /> Retour
+        </button>
+        <div className="text-right">
+          <div style={{ ...serif, fontSize: 20, fontWeight: 700 }}>FOLONEO</div>
+          <div style={{ color: C.gold, fontSize: 9, letterSpacing: "0.2em", marginTop: 2 }}>ON VEILLE, VOUS DORMEZ.</div>
         </div>
-        <button onClick={onClose} style={{ color: C.gold }}><X size={26} /></button>
       </div>
 
       <div className="px-5 mt-6">
