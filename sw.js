@@ -1,4 +1,4 @@
-const CACHE = "foloneo-devis-v1";
+const CACHE = "foloneo-devis-v2";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
   "https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js",
