@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>FOLONEO Devis</title>
+<meta name="theme-color" content="#0A1628">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FOLONEO">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="manifest" href="./manifest.webmanifest">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  html, body { margin:0; padding:0; background:#0A1628; -webkit-tap-highlight-color:transparent; }
+  * { box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+  input, select, textarea, button { font-family:inherit; }
+  #splash { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:#0A1628; z-index:999; }
+</style>
+</head>
+<body>
+<div id="splash">
+  <div style="font-family:Georgia,serif;color:#FAF7F2;font-size:30px;font-weight:700">FOLONEO</div>
+  <div style="color:#C9A961;font-size:12px;letter-spacing:.25em">DEVIS TERRAIN</div>
+</div>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+/* ============================ STOCKAGE LOCAL (IndexedDB) ============================ */
+const _idb = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open("foloneo-devis", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("kv");
+      r.onsuccess = () => { this.db = r.result; res(); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  async get(key) {
+    if (!this.db) await this.open();
+    return new Promise((res, rej) => {
+      const t = this.db.transaction("kv").objectStore("kv").get(key);
+      t.onsuccess = () => res(t.result == null ? null : { key, value: t.result });
+      t.onerror = () => rej(t.error);
+    });
+  },
+  async set(key, value) {
+    if (!this.db) await this.open();
+    return new Promise((res, rej) => {
+      const t = this.db.transaction("kv", "readwrite").objectStore("kv").put(value, key);
+      t.onsuccess = () => res({ key, value });
+      t.onerror = () => rej(t.error);
+    });
+  },
+};
+window.storage = _idb;
+
+/* ============================ ICÔNES (SVG inline) ============================ */
+const mkIcon = (paths) => ({ size = 20, color = "currentColor", style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color}
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, ...style }}
+    dangerouslySetInnerHTML={{ __html: paths }} />
+);
+const FileText = mkIcon('<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>');
+const Package = mkIcon('<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/>');
+const Clock = mkIcon('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>');
+const Settings = mkIcon('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>');
+const Plus = mkIcon('<path d="M5 12h14"/><path d="M12 5v14"/>');
+const Minus = mkIcon('<path d="M5 12h14"/>');
+const Search = mkIcon('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>');
+const Camera = mkIcon('<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>');
+const X = mkIcon('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>');
+const ChevronLeft = mkIcon('<path d="m15 18-6-6 6-6"/>');
+const Trash2 = mkIcon('<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>');
+const Edit3 = mkIcon('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>');
+const Check = mkIcon('<path d="M20 6 9 17l-5-5"/>');
+const Eye = mkIcon('<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>');
+const EyeOff = mkIcon('<path d="M10.7 5.1A9.6 9.6 0 0 1 12 5c7 0 10 7 10 7a13.2 13.2 0 0 1-1.7 2.7"/><path d="M6.6 6.6A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><line x1="2" x2="22" y1="2" y2="22"/>');
+const Download = mkIcon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>');
+const Upload = mkIcon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>');
+const Copy = mkIcon('<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>');
+const Shield = mkIcon('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>');
+const Video = mkIcon('<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>');
+const KeyRound = mkIcon('<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>');
+const Phone = mkIcon('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>');
+const Flame = mkIcon('<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>');
+const Wrench = mkIcon('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>');
+const CircleDollarSign = mkIcon('<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/>');
+const Save = mkIcon('<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>');
+const User = mkIcon('<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>');
+const MapPin = mkIcon('<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>');
+const CheckCircle2 = mkIcon('<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>');
+const Sparkles = mkIcon('<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>');
+const ChevronRight = mkIcon('<path d="m9 18 6-6-6-6"/>');
+const AlertTriangle = mkIcon('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>');
+const Send = mkIcon('<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>');
+const XCircle = mkIcon('<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>');
+
+
+/* ============================ IDENTITÉ FOLONEO ============================ */
+const C = {
+  navy: "#0A1628",
+  navySoft: "#132441",
+  orange: "#E65A1F",
+  gold: "#C9A961",
+  cream: "#FAF7F2",
+  white: "#FFFFFF",
+  green: "#1F7A4D",
+  red: "#C0392B",
+  grey: "#6B7280",
+  line: "#E5DFD5",
+};
+const serif = { fontFamily: "Georgia, 'Times New Roman', serif" };
+
+/* ============================ DONNÉES INITIALES ============================ */
+const CATEGORIES = [
+  { id: "alarme", label: "Alarme", icon: Shield },
+  { id: "video", label: "Vidéo", icon: Video },
+  { id: "acces", label: "Accès", icon: KeyRound },
+  { id: "interphonie", label: "Interphonie", icon: Phone },
+  { id: "incendie", label: "Incendie", icon: Flame },
+  { id: "prestation", label: "Prestation", icon: Wrench },
+];
+
+const DEFAULT_SETTINGS = {
+  coefs: { alarme: 3.0, video: 3.0, acces: 3.2, interphonie: 2.8, incendie: 3.0, prestation: 1.0 },
+  leasing: { 36: 0.0325, 48: 0.0255, 60: 0.0215 },
+  provisionPct: 8,
+  maintenanceMensuelle: 29,
+  tva: 20,
+  modeClient: false,
+  seqDevis: 1,
+};
+
+// prixRef Ajax = tarif Sylis HT ; prixRef Dahua = prix marché TTC
+const SEED_PRODUCTS = [
+  // AJAX SYSTEMS — alarme
+  { m: "Ajax", n: "Hub 2 Plus", lc: "Centrale d'alarme WiFi + 4G double SIM", cat: "alarme", ref: 576.44, img: "https://ajax.systems/cdn/upload/share_hub_rex_24e9ec7efe.jpg" },
+  { m: "Ajax", n: "Hub 2 (4G)", lc: "Centrale d'alarme 4G", cat: "alarme", ref: 504.73, img: "https://ajax.systems/cdn/upload/share_hub_rex_24e9ec7efe.jpg" },
+  { m: "Ajax", n: "MotionProtect", lc: "Détecteur de mouvement intérieur", cat: "alarme", ref: 90.11, img: "https://ajax.systems/api/cdn-img/?img=%2Fupload%2Fmp_xl_93d1779d25%402.jpg" },
+  { m: "Ajax", n: "MotionProtect Plus", lc: "Détecteur de mouvement immunité animaux", cat: "alarme", ref: 118.0, img: "https://ajax.systems/api/cdn-img/?img=%2Fupload%2Fmp_xl_93d1779d25%402.jpg" },
+  { m: "Ajax", n: "MotionCam", lc: "Détecteur de mouvement avec levée de doute photo", cat: "alarme", ref: 132.0 },
+  { m: "Ajax", n: "MotionCam Outdoor", lc: "Détecteur extérieur avec levée de doute photo", cat: "alarme", ref: 383.51 },
+  { m: "Ajax", n: "DoorProtect Plus", lc: "Détecteur d'ouverture + vibration + inclinaison", cat: "alarme", ref: 79.73 },
+  { m: "Ajax", n: "DoorProtect", lc: "Détecteur d'ouverture", cat: "alarme", ref: 46.0 },
+  { m: "Ajax", n: "KeyPad Plus", lc: "Clavier tactile avec lecteur de badge", cat: "alarme", ref: 180.11 },
+  { m: "Ajax", n: "StreetSiren", lc: "Sirène extérieure avec flash", cat: "alarme", ref: 176.73 },
+  { m: "Ajax", n: "HomeSiren", lc: "Sirène intérieure", cat: "alarme", ref: 62.0 },
+  { m: "Ajax", n: "ReX 2", lc: "Répéteur de portée radio", cat: "alarme", ref: 256.38 },
+  { m: "Ajax", n: "FireProtect 2", lc: "Détecteur fumée + chaleur", cat: "incendie", ref: 105.04 },
+  { m: "Ajax", n: "LeaksProtect", lc: "Détecteur d'inondation", cat: "alarme", ref: 71.6 },
+  { m: "Ajax", n: "SpaceControl", lc: "Télécommande 4 boutons", cat: "alarme", ref: 45.04 },
+  { m: "Ajax", n: "Pass / Badge", lc: "Badge d'armement sans contact", cat: "alarme", ref: 84.31, img: "https://ajax.systems/api/cdn-img/?img=%2Fupload%2Fpass_5c971501a7%402.png" },
+  { m: "Ajax", n: "GlassProtect", lc: "Détecteur de bris de vitre", cat: "alarme", ref: 58.0 },
+  // DAHUA — vidéosurveillance (best-sellers marché)
+  { m: "Dahua", n: "IPC-HFW2849S-S-IL", lc: "Caméra tube 8MP vision nocturne couleur", cat: "video", ref: 109.0 },
+  { m: "Dahua", n: "IPC-HFW2449S-S-IL", lc: "Caméra tube 4MP double éclairage", cat: "video", ref: 70.0 },
+  { m: "Dahua", n: "IPC-HDW3849H-AS-PV", lc: "Caméra dôme 8MP dissuasion active TiOC", cat: "video", ref: 189.0 },
+  { m: "Dahua", n: "IPC-HDW2449T-S-IL", lc: "Caméra dôme 4MP double éclairage", cat: "video", ref: 75.0 },
+  { m: "Dahua", n: "IPC-HDW2849T-S-IL", lc: "Caméra dôme 8MP double éclairage", cat: "video", ref: 139.0 },
+  { m: "Dahua", n: "SD49425XB-HNR", lc: "Caméra motorisée PTZ 4MP zoom x25", cat: "video", ref: 599.0 },
+  { m: "Dahua", n: "NVR2108HS-8P-S3", lc: "Enregistreur 8 voies 4K avec PoE", cat: "video", ref: 184.0 },
+  { m: "Dahua", n: "NVR2116HS-S3", lc: "Enregistreur 16 voies 4K", cat: "video", ref: 280.0 },
+  { m: "Dahua", n: "Switch PoE 8 ports", lc: "Switch réseau PoE 8 ports", cat: "video", ref: 109.0 },
+  { m: "Dahua", n: "WD Purple 2 To", lc: "Disque dur vidéosurveillance 2 To", cat: "video", ref: 80.0 },
+  { m: "Dahua", n: "WD Purple 4 To", lc: "Disque dur vidéosurveillance 4 To", cat: "video", ref: 130.0 },
+  { m: "Dahua", n: "VTO2202F-P", lc: "Platine de rue interphone vidéo", cat: "interphonie", ref: 160.0 },
+  { m: "Dahua", n: "VTH2421FW-P", lc: "Moniteur intérieur interphone 7 pouces", cat: "interphonie", ref: 139.0 },
+  // PRESTATIONS
+  { m: "FOLONEO", n: "Installation & paramétrage (heure)", lc: "Main d'œuvre installation et paramétrage", cat: "prestation", ref: 75.0, pv: 75.0 },
+  { m: "FOLONEO", n: "Forfait mise en service", lc: "Mise en service, formation et remise des accès", cat: "prestation", ref: 150.0, pv: 150.0 },
+  { m: "FOLONEO", n: "Déplacement zone Var", lc: "Frais de déplacement", cat: "prestation", ref: 45.0, pv: 45.0 },
+];
+
+/* ============================ CALCULS ============================ */
+const achatFrom = (marque, ref) => {
+  if (marque === "Ajax") return ref * 0.45;
+  if (marque === "Dahua") return (ref / 1.2) * 0.45;
+  return ref;
+};
+const venteOf = (p, settings) =>
+  p.pv != null && p.pv !== "" ? Number(p.pv) : achatFrom(p.m, Number(p.ref)) * (settings.coefs[p.cat] ?? 3);
+
+const fmt = (n) =>
+  (isFinite(n) ? n : 0).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+const fmt0 = (n) => (isFinite(n) ? n : 0).toLocaleString("fr-FR", { maximumFractionDigits: 0 }) + " €";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString();
+const dateFR = (iso) =>
+  new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+const timeFR = (iso) =>
+  new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+
+const computeQuote = (q, settings) => {
+  const materiel = q.lignes.reduce((s, l) => s + l.pv * l.qty, 0);
+  const coutAchat = q.lignes.reduce((s, l) => s + l.pa * l.qty, 0);
+  const brut = materiel;
+  const remise = brut * ((Number(q.remisePct) || 0) / 100);
+  const totalHT = brut - remise;
+  const tva = totalHT * (settings.tva / 100);
+  const totalTTC = totalHT + tva;
+  const marge = totalHT - coutAchat;
+  const tauxMarge = totalHT > 0 ? marge / totalHT : 0;
+  const coefLeasing = settings.leasing[q.duree] ?? 0.0255;
+  const mensMateriel = totalHT * coefLeasing;
+  const provision = mensMateriel * (settings.provisionPct / 100);
+  const maintenance = Number(q.maintenance ?? settings.maintenanceMensuelle) || 0;
+  const mensTotalHT = mensMateriel + provision + maintenance;
+  const mensTotalTTC = mensTotalHT * (1 + settings.tva / 100);
+  return { materiel, coutAchat, remise, totalHT, tva, totalTTC, marge, tauxMarge, mensMateriel, provision, maintenance, mensTotalHT, mensTotalTTC };
+};
+
+/* ============================ STOCKAGE PERSISTANT ============================ */
+const KEYS = { catalog: "foloneo-devis-catalog", quotes: "foloneo-devis-quotes", journal: "foloneo-devis-journal", settings: "foloneo-devis-settings" };
+async function loadKey(key, fallback) {
+  try {
+    const r = await window.storage.get(key);
+    if (r && r.value) return JSON.parse(r.value);
+  } catch (e) { /* clé absente : premier lancement */ }
+  return fallback;
+}
+
+/* ============================ COMPRESSION PHOTO ============================ */
+const compressImage = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 320;
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+/* ============================ PETITS COMPOSANTS ============================ */
+const Field = ({ label, children }) => (
+  <label className="block mb-3">
+    <span className="block text-xs font-semibold mb-1" style={{ color: C.grey, letterSpacing: "0.04em" }}>{label}</span>
+    {children}
+  </label>
+);
+const inputStyle = {
+  width: "100%", padding: "12px 14px", borderRadius: 12, border: `1px solid ${C.line}`,
+  background: C.white, fontSize: 16, color: C.navy, outline: "none",
+};
+const Btn = ({ children, onClick, variant = "primary", full, small, disabled }) => {
+  const styles = {
+    primary: { background: C.orange, color: C.white },
+    dark: { background: C.navy, color: C.white },
+    gold: { background: C.gold, color: C.navy },
+    ghost: { background: "transparent", color: C.navy, border: `1px solid ${C.line}` },
+    danger: { background: "transparent", color: C.red, border: `1px solid ${C.red}44` },
+  };
+  return (
+    <button onClick={onClick} disabled={disabled}
+      className="flex items-center justify-center gap-2 font-semibold active:opacity-70"
+      style={{
+        ...styles[variant], borderRadius: 14, padding: small ? "8px 14px" : "14px 18px",
+        fontSize: small ? 14 : 16, width: full ? "100%" : undefined, opacity: disabled ? 0.45 : 1,
+        transition: "opacity .15s",
+      }}>
+      {children}
+    </button>
+  );
+};
+const ProductPhoto = ({ p, size = 52 }) => {
+  const src = p.photo || p.img || null; // photo prise par l'utilisateur > photo web
+  const [err, setErr] = useState(false);
+  useEffect(() => { setErr(false); }, [src]);
+  const cat = CATEGORIES.find((c) => c.id === p.cat) || CATEGORIES[0];
+  const Icon = cat.icon;
+  if (src && !err)
+    return (
+      <img src={src} alt={p.n} onError={() => setErr(true)}
+        style={{ width: size, height: size, borderRadius: 12, objectFit: p.photo ? "cover" : "contain", background: C.white, border: `1px solid ${C.line}`, flexShrink: 0 }} />
+    );
+  return (
+    <div className="flex items-center justify-center" style={{ width: size, height: size, borderRadius: 12, background: C.navy, flexShrink: 0 }}>
+      <Icon size={size * 0.42} color={C.gold} />
+    </div>
+  );
+};
+
+/* ============================ RECHERCHE PHOTO WEB (IA) ============================ */
+const testImageUrl = (url) =>
+  new Promise((resolve) => {
+    if (!url || !/^https:\/\//.test(url)) return resolve(false);
+    const img = new Image();
+    const timer = setTimeout(() => resolve(false), 6000);
+    img.onload = () => { clearTimeout(timer); resolve(img.width > 60); };
+    img.onerror = () => { clearTimeout(timer); resolve(false); };
+    img.src = url;
+  });
+
+const bingThumb = (q, srv = 2) =>
+  `https://tse${srv}.mm.bing.net/th?q=${encodeURIComponent(q)}&w=480&h=480&c=7&rs=1&p=0`;
+
+const findWebImage = async (product) => {
+  const base = `${product.m === "FOLONEO" || product.m === "Autre" ? "" : product.m + " "}${product.n}`;
+  // 1) Vignettes moteur de recherche — direct et rapide
+  const candidates = [
+    bingThumb(base, 2),
+    bingThumb(base + " produit", 1),
+    bingThumb(base + " " + product.lc.split(" ").slice(0, 3).join(" "), 3),
+  ];
+  for (const u of candidates) {
+    if (await testImageUrl(u)) return u;
+  }
+  // 2) Secours : IA avec recherche web
+  const query = base;
+  const prompt = `Trouve la photo produit officielle (fond blanc ou studio) pour ce matériel de sécurité électronique : "${query}" (${product.lc}). Utilise la recherche web pour trouver une URL DIRECTE vers un fichier image (.jpg, .png ou .webp) — pas une page web. Privilégie le site du fabricant ou d'un distributeur connu. Réponds UNIQUEMENT avec ce JSON, sans texte autour ni backticks : {"urls":["url1","url2","url3"]} — donne 2 à 3 URLs candidates.`;
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+      }),
+    });
+    const data = await r.json();
+    const text = (data.content || []).filter((i) => i.type === "text").map((i) => i.text).join("\n");
+    let urls = [];
+    try {
+      const clean = text.replace(/```json|```/g, "").trim();
+      const start = clean.indexOf("{");
+      const end = clean.lastIndexOf("}");
+      if (start >= 0 && end > start) urls = JSON.parse(clean.slice(start, end + 1)).urls || [];
+    } catch { /* on retombe sur l'extraction regex */ }
+    if (!urls.length) {
+      const found = text.match(/https:\/\/[^\s"'<>)\]]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>)\]]*)?/gi) || [];
+      urls = found;
+    }
+    for (const u of urls.slice(0, 4)) {
+      if (await testImageUrl(u)) return u;
+    }
+  } catch (e) { /* réseau indisponible : on garde l'icône */ }
+  return null;
+};
+const StatusChip = ({ s }) => {
+  const map = {
+    brouillon: { l: "Brouillon", bg: "#EEE9DF", c: C.grey },
+    envoye: { l: "Envoyé", bg: "#DCE8F5", c: "#1D4E89" },
+    accepte: { l: "Accepté", bg: "#DFF0E5", c: C.green },
+    refuse: { l: "Refusé", bg: "#F7E0DC", c: C.red },
+  };
+  const m = map[s] || map.brouillon;
+  return <span style={{ background: m.bg, color: m.c, fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 99 }}>{m.l}</span>;
+};
+
+/* ============================ APPLICATION ============================ */
+function App() {
+  const [ready, setReady] = useState(false);
+  const [catalog, setCatalog] = useState([]);
+  const [quotes, setQuotes] = useState([]);
+  const [journal, setJournal] = useState([]);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [tab, setTab] = useState("devis");
+  const [editQuoteId, setEditQuoteId] = useState(null);
+  const [editProduct, setEditProduct] = useState(null); // null | "new" | product
+  const [picker, setPicker] = useState(false);
+  const [presentation, setPresentation] = useState(false);
+  const [saveState, setSaveState] = useState("ok"); // ok | saving | error
+  const [toast, setToast] = useState(null);
+  const [magic, setMagic] = useState(null); // null | {current, done, total, found, name}
+  const magicStop = useRef(false);
+  const saveTimer = useRef(null);
+
+  /* ---------- Chargement initial ---------- */
+  useEffect(() => {
+    (async () => {
+      const seeded = SEED_PRODUCTS.map((p) => ({ id: uid(), ...p, photo: null, actif: true }));
+      const [cat, qts, jnl, stg] = await Promise.all([
+        loadKey(KEYS.catalog, null),
+        loadKey(KEYS.quotes, []),
+        loadKey(KEYS.journal, []),
+        loadKey(KEYS.settings, null),
+      ]);
+      setCatalog(cat || seeded);
+      setQuotes(qts);
+      setJournal(jnl);
+      setSettings(stg ? { ...DEFAULT_SETTINGS, ...stg } : DEFAULT_SETTINGS);
+      setReady(true);
+    })();
+  }, []);
+
+  /* ---------- Sauvegarde automatique ---------- */
+  useEffect(() => {
+    if (!ready) return;
+    setSaveState("saving");
+    clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      try {
+        await Promise.all([
+          window.storage.set(KEYS.catalog, JSON.stringify(catalog)),
+          window.storage.set(KEYS.quotes, JSON.stringify(quotes)),
+          window.storage.set(KEYS.journal, JSON.stringify(journal.slice(0, 400))),
+          window.storage.set(KEYS.settings, JSON.stringify(settings)),
+        ]);
+        setSaveState("ok");
+      } catch (e) {
+        setSaveState("error");
+      }
+    }, 500);
+    return () => clearTimeout(saveTimer.current);
+  }, [catalog, quotes, journal, settings, ready]);
+
+  const log = useCallback((message) => {
+    setJournal((j) => [{ id: uid(), ts: today(), message }, ...j].slice(0, 400));
+  }, []);
+  const notify = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
+
+  /* ---------- Actions devis ---------- */
+  const newQuote = () => {
+    const num = `DEV-${new Date().getFullYear()}-${String(settings.seqDevis).padStart(3, "0")}`;
+    const q = {
+      id: uid(), num, date: today(), statut: "brouillon",
+      client: { nom: "", ville: "", tel: "" },
+      lignes: [], remisePct: 0, duree: 48, maintenance: settings.maintenanceMensuelle, notes: "",
+    };
+    setQuotes((qs) => [q, ...qs]);
+    setSettings((s) => ({ ...s, seqDevis: s.seqDevis + 1 }));
+    log(`Création du devis ${num}`);
+    setEditQuoteId(q.id);
+  };
+  const patchQuote = (id, patch) => setQuotes((qs) => qs.map((q) => (q.id === id ? { ...q, ...patch } : q)));
+  const deleteQuote = (q) => {
+    if (!window.confirm(`Supprimer le devis ${q.num} ?`)) return;
+    setQuotes((qs) => qs.filter((x) => x.id !== q.id));
+    log(`Suppression du devis ${q.num} (${q.client.nom || "sans client"})`);
+    setEditQuoteId(null);
+  };
+  const duplicateQuote = (q) => {
+    const num = `DEV-${new Date().getFullYear()}-${String(settings.seqDevis).padStart(3, "0")}`;
+    const copy = { ...q, id: uid(), num, date: today(), statut: "brouillon" };
+    setQuotes((qs) => [copy, ...qs]);
+    setSettings((s) => ({ ...s, seqDevis: s.seqDevis + 1 }));
+    log(`Duplication du devis ${q.num} → ${num}`);
+    setEditQuoteId(copy.id);
+    notify("Devis dupliqué");
+  };
+
+  /* ---------- Actions produits ---------- */
+  const saveProduct = (p) => {
+    if (p.id) {
+      setCatalog((c) => c.map((x) => (x.id === p.id ? p : x)));
+      log(`Modification produit : ${p.n}`);
+    } else {
+      const np = { ...p, id: uid(), actif: true };
+      setCatalog((c) => [np, ...c]);
+      log(`Création produit : ${p.n} (${p.m})`);
+    }
+    setEditProduct(null);
+    notify("Produit enregistré");
+  };
+  const deleteProduct = (p) => {
+    if (!window.confirm(`Supprimer « ${p.n} » du catalogue ?`)) return;
+    setCatalog((c) => c.filter((x) => x.id !== p.id));
+    log(`Suppression produit : ${p.n}`);
+    setEditProduct(null);
+  };
+
+  /* ---------- Récupération automatique des photos web ---------- */
+  const runMagicPhotos = async () => {
+    const targets = catalog.filter((p) => !p.photo && !p.img && p.m !== "FOLONEO");
+    if (!targets.length) { notify("Toutes les photos sont déjà en place"); return; }
+    magicStop.current = false;
+    const total = targets.length;
+    let done = 0, found = 0;
+    setMagic({ current: "", done: 0, total, found: 0 });
+    const queue = [...targets];
+    const worker = async () => {
+      while (queue.length && !magicStop.current) {
+        const p = queue.shift();
+        setMagic((m) => (m ? { ...m, current: p.n } : m));
+        const url = await findWebImage(p);
+        if (url) {
+          found++;
+          setCatalog((c) => c.map((x) => (x.id === p.id ? { ...x, img: url } : x)));
+          log(`Photo web trouvée pour « ${p.n} »`);
+        }
+        done++;
+        setMagic((m) => (m ? { ...m, done, found } : m));
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    setMagic(null);
+    log(`Recherche photos web terminée : ${found} photo(s) ajoutée(s) sur ${total}`);
+    notify(`${found} photo(s) récupérée(s)`);
+  };
+
+  /* ---------- Export / Import ---------- */
+  const exportAll = () => {
+    const data = JSON.stringify({ catalog, quotes, journal, settings, exportedAt: today() }, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `foloneo-devis-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    log("Export de la base complète (JSON)");
+  };
+  const importAll = (file) => {
+    const r = new FileReader();
+    r.onload = (e) => {
+      try {
+        const d = JSON.parse(e.target.result);
+        if (d.catalog) setCatalog(d.catalog);
+        if (d.quotes) setQuotes(d.quotes);
+        if (d.settings) setSettings({ ...DEFAULT_SETTINGS, ...d.settings });
+        if (d.journal) setJournal(d.journal);
+        log("Import d'une sauvegarde JSON");
+        notify("Sauvegarde importée");
+      } catch { notify("Fichier invalide"); }
+    };
+    r.readAsText(file);
+  };
+
+  if (!ready)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-3" style={{ background: C.navy }}>
+        <div style={{ ...serif, color: C.cream, fontSize: 28, fontWeight: 700 }}>FOLONEO</div>
+        <div style={{ color: C.gold, fontSize: 13, letterSpacing: "0.2em" }}>DEVIS TERRAIN</div>
+      </div>
+    );
+
+  const currentQuote = quotes.find((q) => q.id === editQuoteId);
+
+  /* ============================ RENDU ============================ */
+  return (
+    <div className="min-h-screen" style={{ background: C.cream, color: C.navy, maxWidth: 480, margin: "0 auto", position: "relative", paddingBottom: 90 }}>
+      {/* ---------- HEADER ---------- */}
+      <header className="flex items-center justify-between px-4 pt-4 pb-3 sticky top-0 z-30" style={{ background: C.navy }}>
+        <div>
+          <div style={{ ...serif, color: C.cream, fontSize: 20, fontWeight: 700, lineHeight: 1 }}>FOLONEO</div>
+          <div style={{ color: C.gold, fontSize: 10, letterSpacing: "0.25em", marginTop: 3 }}>DEVIS TERRAIN</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={() => setSettings((s) => ({ ...s, modeClient: !s.modeClient }))}
+            className="flex items-center gap-1.5"
+            style={{ background: settings.modeClient ? C.gold : "rgba(255,255,255,0.08)", color: settings.modeClient ? C.navy : C.cream, padding: "7px 12px", borderRadius: 99, fontSize: 12, fontWeight: 700 }}>
+            {settings.modeClient ? <Eye size={14} /> : <EyeOff size={14} />}
+            {settings.modeClient ? "Mode client" : "Interne"}
+          </button>
+          <div title={saveState === "ok" ? "Tout est enregistré" : saveState === "saving" ? "Enregistrement…" : "Erreur d'enregistrement"}
+            style={{ width: 10, height: 10, borderRadius: 99, background: saveState === "ok" ? C.green : saveState === "saving" ? C.gold : C.red }} />
+        </div>
+      </header>
+
+      {/* ---------- CONTENU ---------- */}
+      {tab === "devis" && !currentQuote && (
+        <QuoteList quotes={quotes} settings={settings} onOpen={setEditQuoteId} onNew={newQuote} />
+      )}
+      {tab === "devis" && currentQuote && (
+        <QuoteEditor
+          quote={currentQuote} settings={settings} catalog={catalog}
+          onBack={() => setEditQuoteId(null)} onPatch={(p) => patchQuote(currentQuote.id, p)}
+          onDelete={() => deleteQuote(currentQuote)} onDuplicate={() => duplicateQuote(currentQuote)}
+          onPick={() => setPicker(true)} onPresent={() => setPresentation(true)} log={log}
+        />
+      )}
+      {tab === "catalogue" && (
+        <Catalog catalog={catalog} settings={settings} onEdit={setEditProduct} onNew={() => setEditProduct("new")} onMagic={runMagicPhotos} magicRunning={!!magic} />
+      )}
+
+      {/* ---------- PROGRESSION PHOTOS WEB ---------- */}
+      {magic && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-8" style={{ background: "rgba(10,22,40,0.88)" }}>
+          <div className="w-full text-center" style={{ background: C.cream, borderRadius: 20, padding: 24 }}>
+            <Sparkles size={30} color={C.gold} style={{ margin: "0 auto 10px" }} />
+            <div style={{ ...serif, fontSize: 18, fontWeight: 700, marginBottom: 4 }}>Récupération des photos</div>
+            <div style={{ fontSize: 13, color: C.grey, marginBottom: 14 }}>
+              {magic.done}/{magic.total} produits · {magic.found} photo{magic.found > 1 ? "s" : ""} trouvée{magic.found > 1 ? "s" : ""}
+            </div>
+            <div style={{ height: 8, borderRadius: 99, background: C.line, overflow: "hidden", marginBottom: 10 }}>
+              <div style={{ height: "100%", width: `${(magic.done / magic.total) * 100}%`, background: C.orange, transition: "width .3s" }} />
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 700, minHeight: 18 }}>{magic.current}</div>
+            <p style={{ fontSize: 12, color: C.grey, margin: "10px 0 14px" }}>L'app cherche les photos officielles sur le web. Tu peux la laisser tourner, tout s'enregistre au fur et à mesure.</p>
+            <Btn small variant="ghost" onClick={() => { magicStop.current = true; }}>Arrêter</Btn>
+          </div>
+        </div>
+      )}
+      {tab === "journal" && <Journal journal={journal} />}
+      {tab === "reglages" && (
+        <SettingsScreen settings={settings} setSettings={setSettings} onExport={exportAll} onImport={importAll} log={log} />
+      )}
+
+      {/* ---------- MODALES ---------- */}
+      {picker && currentQuote && (
+        <ProductPicker
+          catalog={catalog} settings={settings} onClose={() => setPicker(false)}
+          onAdd={(p) => {
+            const pv = venteOf(p, settings);
+            const pa = achatFrom(p.m, Number(p.ref));
+            const existing = currentQuote.lignes.find((l) => l.pid === p.id);
+            const lignes = existing
+              ? currentQuote.lignes.map((l) => (l.pid === p.id ? { ...l, qty: l.qty + 1 } : l))
+              : [...currentQuote.lignes, { pid: p.id, n: p.n, lc: p.lc, m: p.m, cat: p.cat, photo: p.photo, img: p.img, qty: 1, pv, pa }];
+            patchQuote(currentQuote.id, { lignes });
+            log(`Ajout de « ${p.n} » au devis ${currentQuote.num}`);
+          }}
+        />
+      )}
+      {editProduct && (
+        <ProductForm
+          product={editProduct === "new" ? null : editProduct} settings={settings}
+          onSave={saveProduct} onDelete={deleteProduct} onClose={() => setEditProduct(null)}
+        />
+      )}
+      {presentation && currentQuote && (
+        <ClientPresentation quote={currentQuote} settings={settings} onClose={() => setPresentation(false)} />
+      )}
+
+      {/* ---------- TOAST ---------- */}
+      {toast && (
+        <div className="fixed left-1/2 z-50 flex items-center gap-2" style={{ bottom: 100, transform: "translateX(-50%)", background: C.navy, color: C.cream, padding: "10px 18px", borderRadius: 99, fontSize: 14, fontWeight: 600, boxShadow: "0 8px 24px rgba(10,22,40,0.35)" }}>
+          <CheckCircle2 size={16} color={C.gold} /> {toast}
+        </div>
+      )}
+
+      {/* ---------- BARRE D'ONGLETS ---------- */}
+      <nav className="fixed bottom-0 left-1/2 z-40 flex justify-around items-center" style={{ transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: C.navy, padding: "10px 8px calc(14px + env(safe-area-inset-bottom))", borderTop: `1px solid rgba(201,169,97,0.25)` }}>
+        {[
+          { id: "devis", l: "Devis", I: FileText },
+          { id: "catalogue", l: "Catalogue", I: Package },
+          { id: "journal", l: "Journal", I: Clock },
+          { id: "reglages", l: "Réglages", I: Settings },
+        ].map(({ id, l, I }) => (
+          <button key={id} onClick={() => { setTab(id); setEditQuoteId(null); }}
+            className="flex flex-col items-center gap-1" style={{ color: tab === id ? C.gold : "rgba(250,247,242,0.5)", minWidth: 64 }}>
+            <I size={22} />
+            <span style={{ fontSize: 10, fontWeight: 700 }}>{l}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+/* ============================ LISTE DES DEVIS ============================ */
+function QuoteList({ quotes, settings, onOpen, onNew }) {
+  const [search, setSearch] = useState("");
+  const filtered = quotes.filter((q) =>
+    (q.client.nom + q.num + q.client.ville).toLowerCase().includes(search.toLowerCase())
+  );
+  return (
+    <div className="px-4 pt-4">
+      <div className="flex items-center justify-between mb-4">
+        <h1 style={{ ...serif, fontSize: 26, fontWeight: 700 }}>Devis</h1>
+        <Btn onClick={onNew} small><Plus size={16} /> Nouveau</Btn>
+      </div>
+      <div className="relative mb-4">
+        <Search size={17} style={{ position: "absolute", left: 14, top: 14, color: C.grey }} />
+        <input style={{ ...inputStyle, paddingLeft: 42 }} placeholder="Rechercher un client, un n° de devis…" value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
+      {filtered.length === 0 && (
+        <div className="text-center py-16">
+          <FileText size={40} style={{ color: C.gold, margin: "0 auto 12px" }} />
+          <p style={{ color: C.grey, fontSize: 15 }}>Aucun devis pour l'instant.<br />Appuie sur « Nouveau » pour chiffrer une installation.</p>
+        </div>
+      )}
+      <div className="flex flex-col gap-3">
+        {filtered.map((q) => {
+          const t = computeQuote(q, settings);
+          return (
+            <button key={q.id} onClick={() => onOpen(q.id)} className="text-left active:opacity-70"
+              style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}` }}>
+              <div className="flex items-center justify-between mb-1">
+                <span style={{ fontSize: 12, fontWeight: 700, color: C.grey }}>{q.num} · {dateFR(q.date)}</span>
+                <StatusChip s={q.statut} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div style={{ fontSize: 17, fontWeight: 700 }}>{q.client.nom || "Client à renseigner"}</div>
+                  {q.client.ville && <div style={{ fontSize: 13, color: C.grey }}>{q.client.ville}</div>}
+                </div>
+                <div className="text-right">
+                  <div style={{ ...serif, fontSize: 18, fontWeight: 700 }}>{fmt0(t.totalHT)} <span style={{ fontSize: 11, color: C.grey }}>HT</span></div>
+                  <div style={{ fontSize: 12, color: C.gold, fontWeight: 700 }}>ou {fmt0(t.mensTotalHT)}/mois</div>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ============================ ÉDITEUR DE DEVIS ============================ */
+function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDuplicate, onPick, onPresent, log }) {
+  const t = computeQuote(quote, settings);
+  const mc = settings.modeClient;
+  const setLigne = (pid, patch) =>
+    onPatch({ lignes: quote.lignes.map((l) => (l.pid === pid ? { ...l, ...patch } : l)).filter((l) => l.qty > 0) });
+
+  return (
+    <div className="px-4 pt-4">
+      <div className="flex items-center justify-between mb-3">
+        <button onClick={onBack} className="flex items-center gap-1" style={{ color: C.orange, fontWeight: 700, fontSize: 15 }}>
+          <ChevronLeft size={20} /> Devis
+        </button>
+        <div className="flex gap-2">
+          <Btn variant="ghost" small onClick={onDuplicate}><Copy size={15} /></Btn>
+          <Btn variant="danger" small onClick={onDelete}><Trash2 size={15} /></Btn>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between mb-4">
+        <h1 style={{ ...serif, fontSize: 22, fontWeight: 700 }}>{quote.num}</h1>
+        <select value={quote.statut} onChange={(e) => { onPatch({ statut: e.target.value }); log(`Devis ${quote.num} → statut « ${e.target.value} »`); }}
+          style={{ ...inputStyle, width: "auto", padding: "8px 12px", fontSize: 13, fontWeight: 700 }}>
+          <option value="brouillon">Brouillon</option>
+          <option value="envoye">Envoyé</option>
+          <option value="accepte">Accepté</option>
+          <option value="refuse">Refusé</option>
+        </select>
+      </div>
+
+      {/* Client */}
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div className="flex items-center gap-2 mb-3" style={{ color: C.navy, fontWeight: 700, fontSize: 14 }}><User size={16} color={C.gold} /> CLIENT</div>
+        <Field label="NOM / SOCIÉTÉ"><input style={inputStyle} value={quote.client.nom} placeholder="Ex. Bijouterie Azur" onChange={(e) => onPatch({ client: { ...quote.client, nom: e.target.value } })} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="VILLE"><input style={inputStyle} value={quote.client.ville} placeholder="Toulon" onChange={(e) => onPatch({ client: { ...quote.client, ville: e.target.value } })} /></Field>
+          <Field label="TÉLÉPHONE"><input style={inputStyle} type="tel" value={quote.client.tel} placeholder="06…" onChange={(e) => onPatch({ client: { ...quote.client, tel: e.target.value } })} /></Field>
+        </div>
+      </section>
+
+      {/* Lignes */}
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2" style={{ fontWeight: 700, fontSize: 14 }}><Package size={16} color={C.gold} /> MATÉRIEL & PRESTATIONS</div>
+          <Btn small onClick={onPick}><Plus size={15} /> Ajouter</Btn>
+        </div>
+        {quote.lignes.length === 0 && <p style={{ color: C.grey, fontSize: 14 }}>Aucune ligne. Ajoute des produits du catalogue.</p>}
+        <div className="flex flex-col gap-3">
+          {quote.lignes.map((l) => (
+            <div key={l.pid} className="flex items-center gap-3" style={{ borderBottom: `1px solid ${C.line}`, paddingBottom: 10 }}>
+              <ProductPhoto p={l} size={46} />
+              <div className="flex-1 min-w-0">
+                <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.2 }}>{mc ? l.lc : l.n}</div>
+                <div style={{ fontSize: 12, color: C.grey }}>{mc ? "" : `${l.m} · `}{fmt(l.pv)} / u</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setLigne(l.pid, { qty: l.qty - 1 })} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${C.line}`, color: C.navy }}><Minus size={14} style={{ margin: "0 auto" }} /></button>
+                <span style={{ fontWeight: 700, minWidth: 22, textAlign: "center" }}>{l.qty}</span>
+                <button onClick={() => setLigne(l.pid, { qty: l.qty + 1 })} style={{ width: 30, height: 30, borderRadius: 8, background: C.navy, color: C.cream }}><Plus size={14} style={{ margin: "0 auto" }} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Ajustements */}
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div className="flex items-center gap-2 mb-3" style={{ fontWeight: 700, fontSize: 14 }}><CircleDollarSign size={16} color={C.gold} /> AJUSTEMENTS</div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="REMISE %"><input style={inputStyle} type="number" inputMode="decimal" value={quote.remisePct} onChange={(e) => onPatch({ remisePct: e.target.value })} /></Field>
+          <Field label="MAINTENANCE €/MOIS (PSGE)"><input style={inputStyle} type="number" inputMode="decimal" value={quote.maintenance} onChange={(e) => onPatch({ maintenance: e.target.value })} /></Field>
+        </div>
+        <Field label="DURÉE PSGE">
+          <div className="flex gap-2">
+            {[36, 48, 60].map((d) => (
+              <button key={d} onClick={() => onPatch({ duree: d })} className="flex-1 font-bold"
+                style={{ padding: "12px 0", borderRadius: 12, background: quote.duree === d ? C.navy : C.cream, color: quote.duree === d ? C.gold : C.navy, border: `1px solid ${quote.duree === d ? C.navy : C.line}`, fontSize: 15 }}>
+                {d} mois
+              </button>
+            ))}
+          </div>
+        </Field>
+        <Field label="NOTES INTERNES"><textarea style={{ ...inputStyle, minHeight: 60 }} value={quote.notes} onChange={(e) => onPatch({ notes: e.target.value })} placeholder="Contraintes du site, accès, câblage…" /></Field>
+      </section>
+
+      {/* Double proposition — signature FOLONEO */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div style={{ background: C.navy, borderRadius: 18, padding: 16, color: C.cream }}>
+          <div style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(250,247,242,0.6)", fontWeight: 700 }}>ACHAT</div>
+          <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.totalHT)}</div>
+          <div style={{ fontSize: 11, color: "rgba(250,247,242,0.6)" }}>HT · {fmt0(t.totalTTC)} TTC</div>
+          {t.remise > 0 && <div style={{ fontSize: 11, color: C.gold, marginTop: 6 }}>dont remise {fmt0(t.remise)}</div>}
+        </div>
+        <div style={{ background: `linear-gradient(150deg, ${C.gold}, #B08F45)`, borderRadius: 18, padding: 16, color: C.navy }}>
+          <div className="flex items-center gap-1" style={{ fontSize: 11, letterSpacing: "0.12em", fontWeight: 800 }}><Sparkles size={12} /> PSGE {quote.duree} MOIS</div>
+          <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.mensTotalHT)}<span style={{ fontSize: 13 }}>/mois</span></div>
+          <div style={{ fontSize: 11, opacity: 0.75 }}>HT · maintenance & évolutions incluses</div>
+        </div>
+      </div>
+
+      {/* Marge (interne uniquement) */}
+      {!mc && (
+        <div className="flex items-center justify-between mb-4" style={{ background: "#EFF6F1", border: `1px solid ${C.green}33`, borderRadius: 14, padding: "12px 16px" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: C.green }}>Marge brute matériel</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: C.green }}>{fmt0(t.marge)} · {Math.round(t.tauxMarge * 100)} %</span>
+        </div>
+      )}
+
+      <Btn variant="dark" full onClick={onPresent}><Eye size={18} /> Présentation client</Btn>
+      <div style={{ height: 20 }} />
+    </div>
+  );
+}
+
+/* ============================ SÉLECTEUR PRODUITS ============================ */
+function ProductPicker({ catalog, settings, onClose, onAdd }) {
+  const [search, setSearch] = useState("");
+  const [cat, setCat] = useState("all");
+  const [added, setAdded] = useState({});
+  const list = catalog.filter((p) => p.actif !== false)
+    .filter((p) => cat === "all" || p.cat === cat)
+    .filter((p) => (p.n + p.lc + p.m).toLowerCase().includes(search.toLowerCase()));
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: C.cream, maxWidth: 480, margin: "0 auto" }}>
+      <div className="flex items-center justify-between px-4 py-4" style={{ background: C.navy }}>
+        <span style={{ ...serif, color: C.cream, fontSize: 18, fontWeight: 700 }}>Ajouter des produits</span>
+        <button onClick={onClose} style={{ color: C.gold }}><X size={24} /></button>
+      </div>
+      <div className="px-4 pt-3">
+        <div className="relative mb-3">
+          <Search size={17} style={{ position: "absolute", left: 14, top: 14, color: C.grey }} />
+          <input style={{ ...inputStyle, paddingLeft: 42 }} placeholder="Rechercher…" value={search} onChange={(e) => setSearch(e.target.value)} autoFocus />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {[{ id: "all", label: "Tout" }, ...CATEGORIES].map((c) => (
+            <button key={c.id} onClick={() => setCat(c.id)} className="whitespace-nowrap"
+              style={{ padding: "7px 14px", borderRadius: 99, fontSize: 13, fontWeight: 700, background: cat === c.id ? C.navy : C.white, color: cat === c.id ? C.gold : C.navy, border: `1px solid ${C.line}` }}>
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 overflow-y-auto px-4 pb-8 flex flex-col gap-2 pt-1">
+        {list.map((p) => {
+          const pv = venteOf(p, settings);
+          return (
+            <button key={p.id} onClick={() => { onAdd(p); setAdded((a) => ({ ...a, [p.id]: (a[p.id] || 0) + 1 })); }}
+              className="flex items-center gap-3 text-left active:opacity-60"
+              style={{ background: C.white, borderRadius: 14, padding: 12, border: `1px solid ${added[p.id] ? C.orange : C.line}` }}>
+              <ProductPhoto p={p} size={50} />
+              <div className="flex-1 min-w-0">
+                <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.2 }}>{settings.modeClient ? p.lc : p.n}</div>
+                <div style={{ fontSize: 12, color: C.grey }}>{settings.modeClient ? "" : `${p.m} · `}{fmt(pv)}</div>
+              </div>
+              {added[p.id] ? (
+                <span style={{ background: C.orange, color: C.white, borderRadius: 99, fontSize: 13, fontWeight: 800, padding: "4px 11px" }}>×{added[p.id]}</span>
+              ) : (
+                <Plus size={20} color={C.orange} />
+              )}
+            </button>
+          );
+        })}
+        {list.length === 0 && <p className="text-center py-10" style={{ color: C.grey }}>Aucun produit trouvé.</p>}
+      </div>
+      <div className="px-4 pb-6"><Btn full onClick={onClose}><Check size={18} /> Terminé</Btn></div>
+    </div>
+  );
+}
+
+/* ============================ CATALOGUE ============================ */
+function Catalog({ catalog, settings, onEdit, onNew, onMagic, magicRunning }) {
+  const [search, setSearch] = useState("");
+  const [cat, setCat] = useState("all");
+  const missing = catalog.filter((p) => !p.photo && !p.img && p.m !== "FOLONEO").length;
+  const list = catalog
+    .filter((p) => cat === "all" || p.cat === cat)
+    .filter((p) => (p.n + p.lc + p.m).toLowerCase().includes(search.toLowerCase()));
+  const groups = useMemo(() => {
+    const g = {};
+    list.forEach((p) => { (g[p.m] = g[p.m] || []).push(p); });
+    return g;
+  }, [list]);
+  return (
+    <div className="px-4 pt-4">
+      <div className="flex items-center justify-between mb-3">
+        <h1 style={{ ...serif, fontSize: 26, fontWeight: 700 }}>Catalogue</h1>
+        <Btn small onClick={onNew}><Plus size={16} /> Produit</Btn>
+      </div>
+      {missing > 0 && (
+        <button onClick={onMagic} disabled={magicRunning} className="flex items-center gap-2 w-full mb-4 active:opacity-70"
+          style={{ background: C.navy, color: C.cream, borderRadius: 14, padding: "12px 16px", fontSize: 14, fontWeight: 700, opacity: magicRunning ? 0.5 : 1 }}>
+          <Sparkles size={17} color={C.gold} />
+          Récupérer les photos web ({missing} produit{missing > 1 ? "s" : ""} sans visuel)
+        </button>
+      )}
+      <div className="relative mb-3">
+        <Search size={17} style={{ position: "absolute", left: 14, top: 14, color: C.grey }} />
+        <input style={{ ...inputStyle, paddingLeft: 42 }} placeholder="Rechercher…" value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-3">
+        {[{ id: "all", label: "Tout" }, ...CATEGORIES].map((c) => (
+          <button key={c.id} onClick={() => setCat(c.id)} className="whitespace-nowrap"
+            style={{ padding: "7px 14px", borderRadius: 99, fontSize: 13, fontWeight: 700, background: cat === c.id ? C.navy : C.white, color: cat === c.id ? C.gold : C.navy, border: `1px solid ${C.line}` }}>
+            {c.label}
+          </button>
+        ))}
+      </div>
+      {Object.entries(groups).map(([marque, prods]) => (
+        <div key={marque} className="mb-5">
+          <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.12em", color: C.grey, marginBottom: 8 }}>
+            {settings.modeClient ? "GAMME PROFESSIONNELLE" : marque.toUpperCase()} · {prods.length}
+          </div>
+          <div className="flex flex-col gap-2">
+            {prods.map((p) => {
+              const pa = achatFrom(p.m, Number(p.ref));
+              const pv = venteOf(p, settings);
+              return (
+                <button key={p.id} onClick={() => onEdit(p)} className="flex items-center gap-3 text-left active:opacity-60"
+                  style={{ background: C.white, borderRadius: 14, padding: 12, border: `1px solid ${C.line}`, opacity: p.actif === false ? 0.45 : 1 }}>
+                  <ProductPhoto p={p} size={52} />
+                  <div className="flex-1 min-w-0">
+                    <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.2 }}>{settings.modeClient ? p.lc : p.n}</div>
+                    <div style={{ fontSize: 12, color: C.grey, lineHeight: 1.3 }}>{settings.modeClient ? "" : p.lc}</div>
+                    <div style={{ fontSize: 12, marginTop: 2 }}>
+                      <span style={{ fontWeight: 800, color: C.orange }}>{fmt(pv)}</span>
+                      {!settings.modeClient && <span style={{ color: C.grey }}> · achat {fmt(pa)}</span>}
+                    </div>
+                  </div>
+                  <Edit3 size={17} color={C.grey} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================ FICHE PRODUIT ============================ */
+function ProductForm({ product, settings, onSave, onDelete, onClose }) {
+  const [p, setP] = useState(product || { m: "Ajax", n: "", lc: "", cat: "alarme", ref: "", pv: "", photo: null, img: null, actif: true });
+  const [searching, setSearching] = useState(false);
+  const fileRef = useRef(null);
+  const searchPhoto = async () => {
+    if (!p.n) return;
+    setSearching(true);
+    const url = await findWebImage(p);
+    setSearching(false);
+    if (url) setP((x) => ({ ...x, img: url }));
+    else window.alert("Aucune photo trouvée sur le web pour ce produit. Tu peux en prendre une ou l'importer depuis ta galerie.");
+  };
+  const pa = achatFrom(p.m, Number(p.ref) || 0);
+  const pvAuto = pa * (settings.coefs[p.cat] ?? 3);
+  const pvFinal = p.pv !== "" && p.pv != null ? Number(p.pv) : pvAuto;
+
+  const handlePhoto = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    try {
+      const data = await compressImage(f);
+      setP((x) => ({ ...x, photo: data }));
+    } catch { /* photo illisible */ }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto" style={{ background: C.cream, maxWidth: 480, margin: "0 auto" }}>
+      <div className="flex items-center justify-between px-4 py-4 sticky top-0" style={{ background: C.navy }}>
+        <span style={{ ...serif, color: C.cream, fontSize: 18, fontWeight: 700 }}>{product ? "Modifier le produit" : "Nouveau produit"}</span>
+        <button onClick={onClose} style={{ color: C.gold }}><X size={24} /></button>
+      </div>
+      <div className="px-4 py-4">
+        {/* Photo */}
+        <div className="flex items-center gap-4 mb-3">
+          {p.photo || p.img ? (
+            <img src={p.photo || p.img} alt="" style={{ width: 88, height: 88, borderRadius: 16, objectFit: p.photo ? "cover" : "contain", background: C.white, border: `2px solid ${C.gold}` }} />
+          ) : (
+            <div className="flex items-center justify-center" style={{ width: 88, height: 88, borderRadius: 16, background: C.navy }}>
+              <Camera size={30} color={C.gold} />
+            </div>
+          )}
+          <div className="flex flex-col gap-2 flex-1">
+            <Btn small variant="gold" onClick={searchPhoto} disabled={searching || !p.n}>
+              <Sparkles size={15} /> {searching ? "Recherche en cours…" : "Trouver la photo sur le web"}
+            </Btn>
+            <Btn small variant="dark" onClick={() => fileRef.current?.click()}><Camera size={15} /> Photo / galerie iPhone</Btn>
+            {(p.photo || p.img) && <Btn small variant="danger" onClick={() => setP((x) => ({ ...x, photo: null, img: null }))}><Trash2 size={14} /> Retirer</Btn>}
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handlePhoto} />
+          </div>
+        </div>
+        <Field label="OU COLLER UNE URL D'IMAGE">
+          <input style={inputStyle} type="url" value={p.img || ""} placeholder="https://…" onChange={(e) => setP((x) => ({ ...x, img: e.target.value || null }))} />
+        </Field>
+
+        <Field label="MARQUE">
+          <div className="flex gap-2">
+            {["Ajax", "Dahua", "Autre", "FOLONEO"].map((m) => (
+              <button key={m} onClick={() => setP((x) => ({ ...x, m }))} className="flex-1 font-bold"
+                style={{ padding: "10px 0", borderRadius: 12, fontSize: 13, background: p.m === m ? C.navy : C.white, color: p.m === m ? C.gold : C.navy, border: `1px solid ${C.line}` }}>
+                {m}
+              </button>
+            ))}
+          </div>
+        </Field>
+        <Field label="NOM (INTERNE)"><input style={inputStyle} value={p.n} placeholder="Ex. Hub 2 Plus" onChange={(e) => setP((x) => ({ ...x, n: e.target.value }))} /></Field>
+        <Field label="LIBELLÉ CLIENT (SANS MARQUE)"><input style={inputStyle} value={p.lc} placeholder="Ex. Centrale d'alarme WiFi + 4G" onChange={(e) => setP((x) => ({ ...x, lc: e.target.value }))} /></Field>
+        <Field label="CATÉGORIE">
+          <select style={inputStyle} value={p.cat} onChange={(e) => setP((x) => ({ ...x, cat: e.target.value }))}>
+            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+          </select>
+        </Field>
+        <Field label={p.m === "Ajax" ? "TARIF SYLIS HT (RÉFÉRENCE)" : p.m === "Dahua" ? "PRIX MARCHÉ TTC (RÉFÉRENCE)" : "PRIX DE RÉFÉRENCE / ACHAT"}>
+          <input style={inputStyle} type="number" inputMode="decimal" value={p.ref} onChange={(e) => setP((x) => ({ ...x, ref: e.target.value }))} />
+        </Field>
+        <Field label="PRIX DE VENTE HT (VIDE = AUTOMATIQUE)">
+          <input style={inputStyle} type="number" inputMode="decimal" value={p.pv ?? ""} placeholder={pvAuto ? pvAuto.toFixed(2) : ""} onChange={(e) => setP((x) => ({ ...x, pv: e.target.value }))} />
+        </Field>
+
+        {/* Récap calcul */}
+        <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.line}`, padding: 14, marginBottom: 16 }}>
+          <div className="flex justify-between mb-1" style={{ fontSize: 13 }}><span style={{ color: C.grey }}>Prix d'achat calculé</span><b>{fmt(pa)}</b></div>
+          <div className="flex justify-between mb-1" style={{ fontSize: 13 }}><span style={{ color: C.grey }}>Coefficient {p.cat}</span><b>× {settings.coefs[p.cat] ?? 3}</b></div>
+          <div className="flex justify-between" style={{ fontSize: 14 }}><span style={{ color: C.grey }}>Prix de vente</span><b style={{ color: C.orange }}>{fmt(pvFinal)}</b></div>
+        </div>
+
+        <div className="flex flex-col gap-3 pb-10">
+          <Btn full onClick={() => p.n && onSave(p)} disabled={!p.n}><Save size={18} /> Enregistrer</Btn>
+          {product && (
+            <Btn full variant="ghost" onClick={() => onSave({ ...p, actif: p.actif === false })}>
+              {p.actif === false ? <><CheckCircle2 size={17} /> Réactiver le produit</> : <><EyeOff size={17} /> Désactiver (masquer des devis)</>}
+            </Btn>
+          )}
+          {product && <Btn full variant="danger" onClick={() => onDelete(p)}><Trash2 size={17} /> Supprimer définitivement</Btn>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================ JOURNAL ============================ */
+function Journal({ journal }) {
+  return (
+    <div className="px-4 pt-4">
+      <h1 style={{ ...serif, fontSize: 26, fontWeight: 700, marginBottom: 4 }}>Journal</h1>
+      <p style={{ color: C.grey, fontSize: 13, marginBottom: 16 }}>Toutes les opérations sont tracées et conservées.</p>
+      {journal.length === 0 && <p style={{ color: C.grey }}>Aucune opération enregistrée.</p>}
+      <div className="flex flex-col">
+        {journal.map((e) => (
+          <div key={e.id} className="flex gap-3 py-3" style={{ borderBottom: `1px solid ${C.line}` }}>
+            <div style={{ width: 8, height: 8, borderRadius: 99, background: C.gold, marginTop: 6, flexShrink: 0 }} />
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{e.message}</div>
+              <div style={{ fontSize: 12, color: C.grey }}>{timeFR(e.ts)}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================ RÉGLAGES ============================ */
+function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
+  const importRef = useRef(null);
+  const setCoef = (cat, v) => setSettings((s) => ({ ...s, coefs: { ...s.coefs, [cat]: Number(v) || 0 } }));
+  const setLeasing = (d, v) => setSettings((s) => ({ ...s, leasing: { ...s.leasing, [d]: (Number(v) || 0) / 100 } }));
+  return (
+    <div className="px-4 pt-4 pb-10">
+      <h1 style={{ ...serif, fontSize: 26, fontWeight: 700, marginBottom: 16 }}>Réglages</h1>
+
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Coefficients de vente par catégorie</div>
+        {CATEGORIES.filter((c) => c.id !== "prestation").map((c) => (
+          <div key={c.id} className="flex items-center justify-between mb-2">
+            <span style={{ fontSize: 14 }}>{c.label}</span>
+            <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal" step="0.1"
+              value={settings.coefs[c.id]} onChange={(e) => setCoef(c.id, e.target.value)} />
+          </div>
+        ))}
+      </section>
+
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>PSGE — coefficients mensuels (%)</div>
+        {[36, 48, 60].map((d) => (
+          <div key={d} className="flex items-center justify-between mb-2">
+            <span style={{ fontSize: 14 }}>{d} mois</span>
+            <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal" step="0.01"
+              value={(settings.leasing[d] * 100).toFixed(2)} onChange={(e) => setLeasing(d, e.target.value)} />
+          </div>
+        ))}
+        <div className="flex items-center justify-between mb-2">
+          <span style={{ fontSize: 14 }}>Provision évolutions (%)</span>
+          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal"
+            value={settings.provisionPct} onChange={(e) => setSettings((s) => ({ ...s, provisionPct: Number(e.target.value) || 0 }))} />
+        </div>
+        <div className="flex items-center justify-between">
+          <span style={{ fontSize: 14 }}>Maintenance par défaut (€/mois)</span>
+          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal"
+            value={settings.maintenanceMensuelle} onChange={(e) => setSettings((s) => ({ ...s, maintenanceMensuelle: Number(e.target.value) || 0 }))} />
+        </div>
+      </section>
+
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div className="flex items-center justify-between">
+          <span style={{ fontWeight: 700, fontSize: 14 }}>TVA (%)</span>
+          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal"
+            value={settings.tva} onChange={(e) => setSettings((s) => ({ ...s, tva: Number(e.target.value) || 0 }))} />
+        </div>
+      </section>
+
+      <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Sauvegarde de sécurité</div>
+        <p style={{ fontSize: 13, color: C.grey, marginBottom: 12 }}>Tout est déjà enregistré automatiquement. L'export JSON ajoute une copie externe.</p>
+        <div className="flex gap-3">
+          <Btn small variant="dark" onClick={onExport}><Download size={15} /> Exporter</Btn>
+          <Btn small variant="ghost" onClick={() => importRef.current?.click()}><Upload size={15} /> Importer</Btn>
+          <input ref={importRef} type="file" accept="application/json" style={{ display: "none" }}
+            onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
+        </div>
+      </section>
+
+      <p style={{ fontSize: 12, color: C.grey, textAlign: "center", marginTop: 20 }}>
+        FOLONEO · On veille, vous dormez.<br />Devis Terrain v1.0
+      </p>
+    </div>
+  );
+}
+
+/* ============================ PRÉSENTATION CLIENT ============================ */
+function ClientPresentation({ quote, settings, onClose }) {
+  const t = computeQuote(quote, settings);
+  const [option, setOption] = useState("psge");
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto" style={{ background: C.navy, maxWidth: 480, margin: "0 auto", color: C.cream }}>
+      <div className="flex items-center justify-between px-5 pt-5">
+        <div>
+          <div style={{ ...serif, fontSize: 22, fontWeight: 700 }}>FOLONEO</div>
+          <div style={{ color: C.gold, fontSize: 10, letterSpacing: "0.25em", marginTop: 2 }}>ON VEILLE, VOUS DORMEZ.</div>
+        </div>
+        <button onClick={onClose} style={{ color: C.gold }}><X size={26} /></button>
+      </div>
+
+      <div className="px-5 mt-6">
+        <div style={{ fontSize: 13, color: "rgba(250,247,242,0.55)" }}>Proposition {quote.num} · {dateFR(quote.date)}</div>
+        <div style={{ ...serif, fontSize: 26, fontWeight: 700, marginTop: 4 }}>{quote.client.nom || "Votre projet de sécurité"}</div>
+        {quote.client.ville && <div className="flex items-center gap-1 mt-1" style={{ fontSize: 14, color: "rgba(250,247,242,0.65)" }}><MapPin size={14} /> {quote.client.ville}</div>}
+      </div>
+
+      {/* Sélecteur d'option */}
+      <div className="flex gap-2 px-5 mt-6">
+        {[{ id: "achat", l: "Achat" }, { id: "psge", l: `Tout inclus · ${quote.duree} mois` }].map((o) => (
+          <button key={o.id} onClick={() => setOption(o.id)} className="flex-1 font-bold"
+            style={{ padding: "12px 0", borderRadius: 14, fontSize: 14, background: option === o.id ? C.gold : "rgba(255,255,255,0.07)", color: option === o.id ? C.navy : C.cream }}>
+            {o.l}
+          </button>
+        ))}
+      </div>
+
+      {option === "achat" ? (
+        <div className="px-5 mt-6">
+          <div className="flex flex-col gap-3 mb-6">
+            {quote.lignes.map((l) => (
+              <div key={l.pid} className="flex items-center gap-3" style={{ background: "rgba(255,255,255,0.05)", borderRadius: 14, padding: 12 }}>
+                <ProductPhoto p={l} size={46} />
+                <div className="flex-1">
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>{l.lc || l.n}</div>
+                  <div style={{ fontSize: 12, color: "rgba(250,247,242,0.55)" }}>Quantité : {l.qty}</div>
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: C.gold }}>{fmt0(l.pv * l.qty)}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ borderTop: `1px solid rgba(201,169,97,0.3)`, paddingTop: 16 }}>
+            {t.remise > 0 && <div className="flex justify-between mb-2" style={{ fontSize: 14 }}><span style={{ color: "rgba(250,247,242,0.6)" }}>Remise</span><span>− {fmt0(t.remise)}</span></div>}
+            <div className="flex justify-between mb-1" style={{ fontSize: 15 }}><span>Total HT</span><b>{fmt(t.totalHT)}</b></div>
+            <div className="flex justify-between mb-1" style={{ fontSize: 13, color: "rgba(250,247,242,0.55)" }}><span>TVA {settings.tva} %</span><span>{fmt(t.tva)}</span></div>
+            <div className="flex justify-between items-baseline mt-3">
+              <span style={{ fontSize: 15, fontWeight: 700 }}>Total TTC</span>
+              <span style={{ ...serif, fontSize: 32, fontWeight: 700, color: C.gold }}>{fmt(t.totalTTC)}</span>
+            </div>
+            <p style={{ fontSize: 12, color: "rgba(250,247,242,0.5)", marginTop: 12 }}>Vous êtes propriétaire de votre matériel, sans location imposée.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="px-5 mt-8 text-center">
+          <div style={{ fontSize: 13, letterSpacing: "0.15em", color: C.gold, fontWeight: 700 }}>PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE</div>
+          <div style={{ ...serif, fontSize: 58, fontWeight: 700, color: C.gold, marginTop: 20, lineHeight: 1 }}>{fmt0(t.mensTotalTTC)}</div>
+          <div style={{ fontSize: 15, color: "rgba(250,247,242,0.7)", marginTop: 6 }}>TTC par mois · engagement {quote.duree} mois</div>
+          <div className="flex flex-col gap-3 mt-10 text-left">
+            {["Matériel professionnel installé et paramétré", "Maintenance et assistance incluses", "Évolutions de votre système provisionnées", "Un seul montant mensuel, sans surprise"].map((x, i) => (
+              <div key={i} className="flex items-center gap-3" style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "13px 16px" }}>
+                <CheckCircle2 size={18} color={C.gold} />
+                <span style={{ fontSize: 14 }}>{x}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div style={{ height: 50 }} />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+setTimeout(() => { const s = document.getElementById("splash"); if (s) s.remove(); }, 600);
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
