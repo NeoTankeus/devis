@@ -14,6 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   html, body { margin:0; padding:0; background:#0A1628; -webkit-tap-highlight-color:transparent; }
@@ -204,8 +205,10 @@ const achatFrom = (marque, ref) => {
   if (marque === "Dahua") return (ref / 1.2) * 0.45;
   return ref;
 };
+// Prix d'achat effectif : saisi manuellement si présent, sinon calculé depuis la référence
+const achatOf = (p) => (p.pa != null && p.pa !== "" ? Number(p.pa) : achatFrom(p.m, Number(p.ref)));
 const venteOf = (p, settings) =>
-  p.pv != null && p.pv !== "" ? Number(p.pv) : achatFrom(p.m, Number(p.ref)) * (settings.coefs[p.cat] ?? 3);
+  p.pv != null && p.pv !== "" ? Number(p.pv) : achatOf(p) * (settings.coefs[p.cat] ?? 3);
 
 const fmt = (n) =>
   (isFinite(n) ? n : 0).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
@@ -236,6 +239,126 @@ const computeQuote = (q, settings) => {
   const mensTotalTTC = duree > 0 ? totalLocation / duree : 0;
   const mensTotalHT = mensTotalTTC / (1 + settings.tva / 100);
   return { materiel, coutAchat, remise, totalHT, tva, totalTTC, marge, tauxMarge, tauxLocation, totalLocation, mensTotalTTC, mensTotalHT };
+};
+
+/* ============================ EXPORT PDF DU DEVIS ============================ */
+const eurPdf = (n) => {
+  const s = (isFinite(n) ? n : 0).toFixed(2).replace(".", ",");
+  return s.replace(/\B(?=(\d{3})+(?=,))/g, " ") + " €";
+};
+const exportQuotePdf = async (q, settings) => {
+  const jsPDF = window.jspdf && window.jspdf.jsPDF;
+  if (!jsPDF) { window.alert("Module PDF non chargé. Vérifie ta connexion internet puis réessaie."); return false; }
+  const t = computeQuote(q, settings);
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const W = 595.28;
+  const navy = [10, 22, 40], gold = [201, 169, 97], grey = [107, 114, 128], cream = [250, 247, 242], dark = [10, 22, 40];
+
+  // En-tête
+  doc.setFillColor(...navy); doc.rect(0, 0, W, 92, "F");
+  doc.setTextColor(...cream); doc.setFont("helvetica", "bold"); doc.setFontSize(24);
+  doc.text("FOLONEO", 40, 46);
+  doc.setFontSize(7.5); doc.setTextColor(...gold); doc.text("O N   V E I L L E ,   V O U S   D O R M E Z .", 40, 63);
+  doc.setFontSize(15); doc.setTextColor(...cream); doc.text(`DEVIS ${q.num}`, W - 40, 42, { align: "right" });
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+  doc.text(`Date : ${dateFR(q.date)}`, W - 40, 60, { align: "right" });
+  doc.text("Validité : 30 jours", W - 40, 74, { align: "right" });
+
+  // Client
+  let y = 122;
+  doc.setTextColor(...grey); doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.text("CLIENT", 40, y);
+  doc.setTextColor(...dark); doc.setFontSize(13); doc.text(q.client.nom || "—", 40, y + 17);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(...grey);
+  const sub = [q.client.ville, q.client.tel].filter(Boolean).join("  ·  ");
+  if (sub) doc.text(sub, 40, y + 33);
+  y += 54;
+
+  // Tableau
+  doc.setFillColor(...navy); doc.rect(40, y, W - 80, 22, "F");
+  doc.setTextColor(...cream); doc.setFontSize(8.5); doc.setFont("helvetica", "bold");
+  doc.text("DÉSIGNATION", 48, y + 15);
+  doc.text("QTÉ", 388, y + 15, { align: "right" });
+  doc.text("PU HT", 462, y + 15, { align: "right" });
+  doc.text("TOTAL HT", W - 48, y + 15, { align: "right" });
+  y += 22;
+  doc.setFont("helvetica", "normal"); doc.setTextColor(...dark);
+  q.lignes.forEach((l, i) => {
+    const label = l.lc || l.n;
+    const lines = doc.splitTextToSize(label, 290);
+    const rowH = Math.max(21, lines.length * 11 + 10);
+    if (y + rowH > 720) { doc.addPage(); y = 50; }
+    if (i % 2 === 0) { doc.setFillColor(...cream); doc.rect(40, y, W - 80, rowH, "F"); }
+    doc.setFontSize(9);
+    doc.text(lines, 48, y + 14);
+    doc.text(String(l.qty), 388, y + 14, { align: "right" });
+    doc.text(eurPdf(l.pv), 462, y + 14, { align: "right" });
+    doc.text(eurPdf(l.pv * l.qty), W - 48, y + 14, { align: "right" });
+    y += rowH;
+  });
+  doc.setDrawColor(...gold); doc.setLineWidth(1); doc.line(40, y, W - 40, y);
+
+  // Totaux
+  if (y > 620) { doc.addPage(); y = 50; }
+  y += 22;
+  const totLine = (label, val, bold, big) => {
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(big ? 13 : 10);
+    doc.setTextColor(...(big ? navy : grey));
+    doc.text(label, 380, y, { align: "left" });
+    doc.setTextColor(...(big ? navy : dark));
+    doc.text(val, W - 48, y, { align: "right" });
+    y += big ? 22 : 16;
+  };
+  totLine("Total HT", eurPdf(t.totalHT + t.remise), false);
+  if (t.remise > 0) totLine("Remise", "- " + eurPdf(t.remise), false);
+  if (t.remise > 0) totLine("Net HT", eurPdf(t.totalHT), false);
+  totLine(`TVA ${settings.tva} %`, eurPdf(t.tva), false);
+  totLine("TOTAL TTC", eurPdf(t.totalTTC), true, true);
+
+  // Encadré location
+  y += 8;
+  if (y > 700) { doc.addPage(); y = 50; }
+  doc.setFillColor(...cream); doc.setDrawColor(...gold); doc.setLineWidth(1.2);
+  doc.roundedRect(40, y, W - 80, 58, 8, 8, "FD");
+  doc.setTextColor(...gold); doc.setFont("helvetica", "bold"); doc.setFontSize(8.5);
+  doc.text("FORMULE LOCATION TOUT INCLUS", 56, y + 20);
+  doc.setTextColor(...navy); doc.setFontSize(14);
+  doc.text(`${eurPdf(t.mensTotalTTC)} / mois TTC`, 56, y + 40);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...grey);
+  doc.text(`sur ${q.duree} mois — maintenance annuelle incluse`, 240, y + 40);
+  y += 78;
+
+  // Signature
+  if (y > 700) { doc.addPage(); y = 50; }
+  doc.setFontSize(9); doc.setTextColor(...grey);
+  doc.text("Bon pour accord — Date et signature :", 40, y + 10);
+  doc.setDrawColor(200, 195, 185); doc.setLineWidth(0.8);
+  doc.rect(40, y + 18, 220, 60);
+
+  // Pied de page (toutes les pages)
+  const pages = doc.getNumberOfPages();
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7.5); doc.setTextColor(...grey); doc.setFont("helvetica", "normal");
+    doc.text("FOLONEO EURL — Toulon  ·  04 87 86 01 19  ·  contact@foloneo.fr  ·  www.foloneo.fr", W / 2, 812, { align: "center" });
+    doc.text("Le client reste propriétaire de son matériel. Devis établi sous réserve de visite technique.", W / 2, 824, { align: "center" });
+  }
+
+  const cleanName = (q.client.nom || "").replace(/[^\wÀ-ÿ-]+/g, "_").slice(0, 30);
+  const fileName = `${q.num}${cleanName ? "-" + cleanName : ""}.pdf`;
+  const blob = doc.output("blob");
+  try {
+    const file = new File([blob], fileName, { type: "application/pdf" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: fileName });
+      return true;
+    }
+  } catch (e) { if (e && e.name === "AbortError") return true; }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName;
+  a.click();
+  return true;
 };
 
 /* ============================ STOCKAGE PERSISTANT ============================ */
@@ -637,7 +760,7 @@ function App() {
           catalog={catalog} settings={settings} onClose={() => setPicker(false)}
           onAdd={(p) => {
             const pv = venteOf(p, settings);
-            const pa = achatFrom(p.m, Number(p.ref));
+            const pa = achatOf(p);
             const existing = currentQuote.lignes.find((l) => l.pid === p.id);
             const lignes = existing
               ? currentQuote.lignes.map((l) => (l.pid === p.id ? { ...l, qty: l.qty + 1 } : l))
@@ -839,6 +962,10 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
       )}
 
       <Btn variant="dark" full onClick={onPresent}><Eye size={18} /> Présentation client</Btn>
+      <div style={{ height: 10 }} />
+      <Btn variant="gold" full onClick={async () => { const ok = await exportQuotePdf(quote, settings); if (ok) log(`Export PDF du devis ${quote.num}`); }}>
+        <Download size={18} /> Exporter le devis en PDF
+      </Btn>
       <div style={{ height: 20 }} />
     </div>
   );
@@ -947,7 +1074,7 @@ function Catalog({ catalog, settings, onEdit, onNew, onMagic, magicRunning }) {
           </div>
           <div className="flex flex-col gap-2">
             {prods.map((p) => {
-              const pa = achatFrom(p.m, Number(p.ref));
+              const pa = achatOf(p);
               const pv = venteOf(p, settings);
               return (
                 <button key={p.id} onClick={() => onEdit(p)} className="flex items-center gap-3 text-left active:opacity-60"
@@ -974,7 +1101,7 @@ function Catalog({ catalog, settings, onEdit, onNew, onMagic, magicRunning }) {
 
 /* ============================ FICHE PRODUIT ============================ */
 function ProductForm({ product, settings, onSave, onDelete, onClose }) {
-  const [p, setP] = useState(product || { m: "Ajax", n: "", lc: "", cat: "alarme", ref: "", pv: "", photo: null, img: null, actif: true });
+  const [p, setP] = useState(product || { m: "Ajax", n: "", lc: "", cat: "alarme", ref: "", pa: null, pv: null, photo: null, img: null, actif: true });
   const [searching, setSearching] = useState(false);
   const fileRef = useRef(null);
   const searchPhoto = async () => {
@@ -985,10 +1112,14 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
     if (url) setP((x) => ({ ...x, img: url }));
     else window.alert("Aucune photo trouvée sur le web pour ce produit. Tu peux en prendre une ou l'importer depuis ta galerie.");
   };
-  const pa = achatFrom(p.m, Number(p.ref) || 0);
+  const paAuto = achatFrom(p.m, Number(p.ref) || 0);
+  const paManual = p.pa != null; // en cours de saisie manuelle (même vide)
+  const paHas = p.pa != null && p.pa !== "";
+  const pa = paHas ? Number(p.pa) : paAuto;
   const pvAuto = pa * (settings.coefs[p.cat] ?? 3);
-  const pvOverride = p.pv !== "" && p.pv != null;
-  const pvFinal = pvOverride ? Number(p.pv) : pvAuto;
+  const pvManual = p.pv != null;
+  const pvHas = p.pv != null && p.pv !== "";
+  const pvFinal = pvHas ? Number(p.pv) : pvAuto;
 
   const handlePhoto = async (e) => {
     const f = e.target.files?.[0];
@@ -1048,16 +1179,25 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
             {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
         </Field>
-        <Field label={p.m === "Ajax" ? "TARIF SYLIS HT (RÉFÉRENCE)" : p.m === "Dahua" ? "PRIX MARCHÉ TTC (RÉFÉRENCE)" : "PRIX DE RÉFÉRENCE / ACHAT"}>
+        <Field label={p.m === "Ajax" ? "TARIF SYLIS HT (RÉFÉRENCE)" : p.m === "Dahua" ? "PRIX MARCHÉ TTC (RÉFÉRENCE)" : "PRIX DE RÉFÉRENCE"}>
           <input style={inputStyle} type="number" inputMode="decimal" value={p.ref} onChange={(e) => setP((x) => ({ ...x, ref: e.target.value }))} />
         </Field>
-        <Field label={pvOverride ? "PRIX DE VENTE HT — MODIFIÉ MANUELLEMENT" : `PRIX DE VENTE HT — AUTOMATIQUE (ACHAT × ${settings.coefs[p.cat] ?? 3})`}>
-          <input style={{ ...inputStyle, borderColor: pvOverride ? C.orange : C.line, fontWeight: 700 }} type="number" inputMode="decimal"
-            value={pvOverride ? p.pv : pvAuto ? Number(pvAuto.toFixed(2)) : ""}
+        <Field label={paManual ? "PRIX D'ACHAT HT — SAISI MANUELLEMENT" : `PRIX D'ACHAT HT — AUTOMATIQUE (${p.m === "Ajax" ? "SYLIS × 0,45" : p.m === "Dahua" ? "MARCHÉ ÷ 1,20 × 0,45" : "= RÉFÉRENCE"})`}>
+          <input style={{ ...inputStyle, borderColor: paManual ? C.orange : C.line }} type="number" inputMode="decimal"
+            value={paManual ? p.pa : paAuto ? Number(paAuto.toFixed(2)) : ""}
+            onChange={(e) => setP((x) => ({ ...x, pa: e.target.value }))} />
+          {paManual && (
+            <button onClick={() => setP((x) => ({ ...x, pa: null }))} className="mt-2 font-bold" style={{ fontSize: 13, color: C.orange }}>
+              ↻ Revenir au calcul automatique ({fmt(paAuto)})
+            </button>
+          )}
+        </Field>
+        <Field label={pvManual ? "PRIX DE VENTE HT — MODIFIÉ MANUELLEMENT" : `PRIX DE VENTE HT — AUTOMATIQUE (ACHAT × ${settings.coefs[p.cat] ?? 3})`}>
+          <input style={{ ...inputStyle, borderColor: pvManual ? C.orange : C.line, fontWeight: 700 }} type="number" inputMode="decimal"
+            value={pvManual ? p.pv : pvAuto ? Number(pvAuto.toFixed(2)) : ""}
             onChange={(e) => setP((x) => ({ ...x, pv: e.target.value }))} />
-          {pvOverride && (
-            <button onClick={() => setP((x) => ({ ...x, pv: "" }))} className="mt-2 font-bold"
-              style={{ fontSize: 13, color: C.orange }}>
+          {pvManual && (
+            <button onClick={() => setP((x) => ({ ...x, pv: null }))} className="mt-2 font-bold" style={{ fontSize: 13, color: C.orange }}>
               ↻ Revenir au prix automatique ({fmt(pvAuto)})
             </button>
           )}
@@ -1065,10 +1205,12 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
 
         {/* Récap calcul */}
         <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.line}`, padding: 14, marginBottom: 16 }}>
-          <div className="flex justify-between mb-1" style={{ fontSize: 13 }}><span style={{ color: C.grey }}>Prix d'achat calculé</span><b>{fmt(pa)}</b></div>
+          <div className="flex justify-between mb-1" style={{ fontSize: 13 }}>
+            <span style={{ color: C.grey }}>Prix d'achat {paHas ? "(manuel)" : "(auto)"}</span><b>{fmt(pa)}</b>
+          </div>
           <div className="flex justify-between mb-1" style={{ fontSize: 13 }}><span style={{ color: C.grey }}>Coefficient {p.cat}</span><b>× {settings.coefs[p.cat] ?? 3}</b></div>
           <div className="flex justify-between mb-1" style={{ fontSize: 14 }}>
-            <span style={{ color: C.grey }}>Prix de vente {pvOverride ? "(manuel)" : "(auto)"}</span>
+            <span style={{ color: C.grey }}>Prix de vente {pvHas ? "(manuel)" : "(auto)"}</span>
             <b style={{ color: C.orange }}>{fmt(pvFinal)}</b>
           </div>
           <div className="flex justify-between" style={{ fontSize: 13 }}>
@@ -1078,7 +1220,7 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
         </div>
 
         <div className="flex flex-col gap-3 pb-10">
-          <Btn full onClick={() => p.n && onSave(p)} disabled={!p.n}><Save size={18} /> Enregistrer</Btn>
+          <Btn full onClick={() => p.n && onSave({ ...p, pa: p.pa === "" ? null : p.pa, pv: p.pv === "" ? null : p.pv })} disabled={!p.n}><Save size={18} /> Enregistrer</Btn>
           {product && (
             <Btn full variant="ghost" onClick={() => onSave({ ...p, actif: p.actif === false })}>
               {p.actif === false ? <><CheckCircle2 size={17} /> Réactiver le produit</> : <><EyeOff size={17} /> Désactiver (masquer des devis)</>}
