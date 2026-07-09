@@ -130,9 +130,7 @@ const CATEGORIES = [
 
 const DEFAULT_SETTINGS = {
   coefs: { alarme: 3.0, video: 3.0, acces: 3.2, interphonie: 2.8, incendie: 3.0, prestation: 1.0 },
-  leasing: { 36: 0.0325, 48: 0.0255, 60: 0.0215 },
-  provisionPct: 8,
-  maintenanceMensuelle: 29,
+  location: { tauxBas: 7, tauxHaut: 5, seuil: 10000 },
   tva: 20,
   modeClient: false,
   seqDevis: 1,
@@ -229,13 +227,15 @@ const computeQuote = (q, settings) => {
   const totalTTC = totalHT + tva;
   const marge = totalHT - coutAchat;
   const tauxMarge = totalHT > 0 ? marge / totalHT : 0;
-  const coefLeasing = settings.leasing[q.duree] ?? 0.0255;
-  const mensMateriel = totalHT * coefLeasing;
-  const provision = mensMateriel * (settings.provisionPct / 100);
-  const maintenance = Number(q.maintenance ?? settings.maintenanceMensuelle) || 0;
-  const mensTotalHT = mensMateriel + provision + maintenance;
-  const mensTotalTTC = mensTotalHT * (1 + settings.tva / 100);
-  return { materiel, coutAchat, remise, totalHT, tva, totalTTC, marge, tauxMarge, mensMateriel, provision, maintenance, mensTotalHT, mensTotalTTC };
+  // LOCATION : prix TTC + 7 %/an si ≤ 10 000 € (sinon 5 %/an), le tout divisé par la durée en mois
+  const loc = settings.location || { tauxBas: 7, tauxHaut: 5, seuil: 10000 };
+  const tauxLocation = (totalTTC <= loc.seuil ? loc.tauxBas : loc.tauxHaut) / 100;
+  const duree = Number(q.duree) || 48;
+  const annees = duree / 12;
+  const totalLocation = totalTTC * (1 + tauxLocation * annees);
+  const mensTotalTTC = duree > 0 ? totalLocation / duree : 0;
+  const mensTotalHT = mensTotalTTC / (1 + settings.tva / 100);
+  return { materiel, coutAchat, remise, totalHT, tva, totalTTC, marge, tauxMarge, tauxLocation, totalLocation, mensTotalTTC, mensTotalHT };
 };
 
 /* ============================ STOCKAGE PERSISTANT ============================ */
@@ -462,7 +462,7 @@ function App() {
     const q = {
       id: uid(), num, date: today(), statut: "brouillon",
       client: { nom: "", ville: "", tel: "" },
-      lignes: [], remisePct: 0, duree: 48, maintenance: settings.maintenanceMensuelle, notes: "",
+      lignes: [], remisePct: 0, duree: 48, notes: "",
     };
     setQuotes((qs) => [q, ...qs]);
     setSettings((s) => ({ ...s, seqDevis: s.seqDevis + 1 }));
@@ -722,7 +722,7 @@ function QuoteList({ quotes, settings, onOpen, onNew }) {
                 </div>
                 <div className="text-right">
                   <div style={{ ...serif, fontSize: 18, fontWeight: 700 }}>{fmt0(t.totalHT)} <span style={{ fontSize: 11, color: C.grey }}>HT</span></div>
-                  <div style={{ fontSize: 12, color: C.gold, fontWeight: 700 }}>ou {fmt0(t.mensTotalHT)}/mois</div>
+                  <div style={{ fontSize: 12, color: C.gold, fontWeight: 700 }}>ou {fmt0(t.mensTotalTTC)}/mois TTC</div>
                 </div>
               </div>
             </button>
@@ -801,11 +801,8 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
       {/* Ajustements */}
       <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
         <div className="flex items-center gap-2 mb-3" style={{ fontWeight: 700, fontSize: 14 }}><CircleDollarSign size={16} color={C.gold} /> AJUSTEMENTS</div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="REMISE %"><input style={inputStyle} type="number" inputMode="decimal" value={quote.remisePct} onChange={(e) => onPatch({ remisePct: e.target.value })} /></Field>
-          <Field label="MAINTENANCE €/MOIS (PSGE)"><input style={inputStyle} type="number" inputMode="decimal" value={quote.maintenance} onChange={(e) => onPatch({ maintenance: e.target.value })} /></Field>
-        </div>
-        <Field label="DURÉE PSGE">
+        <Field label="REMISE %"><input style={inputStyle} type="number" inputMode="decimal" value={quote.remisePct} onChange={(e) => onPatch({ remisePct: e.target.value })} /></Field>
+        <Field label="DURÉE LOCATION">
           <div className="flex gap-2">
             {[36, 48, 60].map((d) => (
               <button key={d} onClick={() => onPatch({ duree: d })} className="flex-1 font-bold"
@@ -827,9 +824,9 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
           {t.remise > 0 && <div style={{ fontSize: 11, color: C.gold, marginTop: 6 }}>dont remise {fmt0(t.remise)}</div>}
         </div>
         <div style={{ background: `linear-gradient(150deg, ${C.gold}, #B08F45)`, borderRadius: 18, padding: 16, color: C.navy }}>
-          <div className="flex items-center gap-1" style={{ fontSize: 11, letterSpacing: "0.12em", fontWeight: 800 }}><Sparkles size={12} /> PSGE {quote.duree} MOIS</div>
-          <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.mensTotalHT)}<span style={{ fontSize: 13 }}>/mois</span></div>
-          <div style={{ fontSize: 11, opacity: 0.75 }}>HT · maintenance & évolutions incluses</div>
+          <div className="flex items-center gap-1" style={{ fontSize: 11, letterSpacing: "0.12em", fontWeight: 800 }}><Sparkles size={12} /> LOCATION {quote.duree} MOIS</div>
+          <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.mensTotalTTC)}<span style={{ fontSize: 13 }}>/mois</span></div>
+          <div style={{ fontSize: 11, opacity: 0.75 }}>TTC · maintenance {Math.round(t.tauxLocation * 100)} %/an incluse</div>
         </div>
       </div>
 
@@ -990,7 +987,8 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
   };
   const pa = achatFrom(p.m, Number(p.ref) || 0);
   const pvAuto = pa * (settings.coefs[p.cat] ?? 3);
-  const pvFinal = p.pv !== "" && p.pv != null ? Number(p.pv) : pvAuto;
+  const pvOverride = p.pv !== "" && p.pv != null;
+  const pvFinal = pvOverride ? Number(p.pv) : pvAuto;
 
   const handlePhoto = async (e) => {
     const f = e.target.files?.[0];
@@ -1053,15 +1051,30 @@ function ProductForm({ product, settings, onSave, onDelete, onClose }) {
         <Field label={p.m === "Ajax" ? "TARIF SYLIS HT (RÉFÉRENCE)" : p.m === "Dahua" ? "PRIX MARCHÉ TTC (RÉFÉRENCE)" : "PRIX DE RÉFÉRENCE / ACHAT"}>
           <input style={inputStyle} type="number" inputMode="decimal" value={p.ref} onChange={(e) => setP((x) => ({ ...x, ref: e.target.value }))} />
         </Field>
-        <Field label="PRIX DE VENTE HT (VIDE = AUTOMATIQUE)">
-          <input style={inputStyle} type="number" inputMode="decimal" value={p.pv ?? ""} placeholder={pvAuto ? pvAuto.toFixed(2) : ""} onChange={(e) => setP((x) => ({ ...x, pv: e.target.value }))} />
+        <Field label={pvOverride ? "PRIX DE VENTE HT — MODIFIÉ MANUELLEMENT" : `PRIX DE VENTE HT — AUTOMATIQUE (ACHAT × ${settings.coefs[p.cat] ?? 3})`}>
+          <input style={{ ...inputStyle, borderColor: pvOverride ? C.orange : C.line, fontWeight: 700 }} type="number" inputMode="decimal"
+            value={pvOverride ? p.pv : pvAuto ? Number(pvAuto.toFixed(2)) : ""}
+            onChange={(e) => setP((x) => ({ ...x, pv: e.target.value }))} />
+          {pvOverride && (
+            <button onClick={() => setP((x) => ({ ...x, pv: "" }))} className="mt-2 font-bold"
+              style={{ fontSize: 13, color: C.orange }}>
+              ↻ Revenir au prix automatique ({fmt(pvAuto)})
+            </button>
+          )}
         </Field>
 
         {/* Récap calcul */}
         <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.line}`, padding: 14, marginBottom: 16 }}>
           <div className="flex justify-between mb-1" style={{ fontSize: 13 }}><span style={{ color: C.grey }}>Prix d'achat calculé</span><b>{fmt(pa)}</b></div>
           <div className="flex justify-between mb-1" style={{ fontSize: 13 }}><span style={{ color: C.grey }}>Coefficient {p.cat}</span><b>× {settings.coefs[p.cat] ?? 3}</b></div>
-          <div className="flex justify-between" style={{ fontSize: 14 }}><span style={{ color: C.grey }}>Prix de vente</span><b style={{ color: C.orange }}>{fmt(pvFinal)}</b></div>
+          <div className="flex justify-between mb-1" style={{ fontSize: 14 }}>
+            <span style={{ color: C.grey }}>Prix de vente {pvOverride ? "(manuel)" : "(auto)"}</span>
+            <b style={{ color: C.orange }}>{fmt(pvFinal)}</b>
+          </div>
+          <div className="flex justify-between" style={{ fontSize: 13 }}>
+            <span style={{ color: C.grey }}>Marge unitaire</span>
+            <b style={{ color: C.green }}>{fmt(pvFinal - pa)}</b>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3 pb-10">
@@ -1104,7 +1117,6 @@ function Journal({ journal }) {
 function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
   const importRef = useRef(null);
   const setCoef = (cat, v) => setSettings((s) => ({ ...s, coefs: { ...s.coefs, [cat]: Number(v) || 0 } }));
-  const setLeasing = (d, v) => setSettings((s) => ({ ...s, leasing: { ...s.leasing, [d]: (Number(v) || 0) / 100 } }));
   return (
     <div className="px-4 pt-4 pb-10">
       <h1 style={{ ...serif, fontSize: 26, fontWeight: 700, marginBottom: 16 }}>Réglages</h1>
@@ -1121,23 +1133,22 @@ function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
       </section>
 
       <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
-        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>PSGE — coefficients mensuels (%)</div>
-        {[36, 48, 60].map((d) => (
-          <div key={d} className="flex items-center justify-between mb-2">
-            <span style={{ fontSize: 14 }}>{d} mois</span>
-            <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal" step="0.01"
-              value={(settings.leasing[d] * 100).toFixed(2)} onChange={(e) => setLeasing(d, e.target.value)} />
-          </div>
-        ))}
+        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Location — taux annuels</div>
+        <p style={{ fontSize: 12, color: C.grey, marginBottom: 12 }}>Mensualité = (prix TTC + taux × années) ÷ nombre de mois</p>
         <div className="flex items-center justify-between mb-2">
-          <span style={{ fontSize: 14 }}>Provision évolutions (%)</span>
-          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal"
-            value={settings.provisionPct} onChange={(e) => setSettings((s) => ({ ...s, provisionPct: Number(e.target.value) || 0 }))} />
+          <span style={{ fontSize: 14 }}>Taux si devis ≤ seuil (%/an)</span>
+          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal" step="0.5"
+            value={settings.location.tauxBas} onChange={(e) => setSettings((s) => ({ ...s, location: { ...s.location, tauxBas: Number(e.target.value) || 0 } }))} />
+        </div>
+        <div className="flex items-center justify-between mb-2">
+          <span style={{ fontSize: 14 }}>Taux si devis &gt; seuil (%/an)</span>
+          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal" step="0.5"
+            value={settings.location.tauxHaut} onChange={(e) => setSettings((s) => ({ ...s, location: { ...s.location, tauxHaut: Number(e.target.value) || 0 } }))} />
         </div>
         <div className="flex items-center justify-between">
-          <span style={{ fontSize: 14 }}>Maintenance par défaut (€/mois)</span>
-          <input style={{ ...inputStyle, width: 90, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal"
-            value={settings.maintenanceMensuelle} onChange={(e) => setSettings((s) => ({ ...s, maintenanceMensuelle: Number(e.target.value) || 0 }))} />
+          <span style={{ fontSize: 14 }}>Seuil (€ TTC)</span>
+          <input style={{ ...inputStyle, width: 110, textAlign: "center", padding: "8px" }} type="number" inputMode="decimal"
+            value={settings.location.seuil} onChange={(e) => setSettings((s) => ({ ...s, location: { ...s.location, seuil: Number(e.target.value) || 0 } }))} />
         </div>
       </section>
 
@@ -1191,7 +1202,7 @@ function ClientPresentation({ quote, settings, onClose }) {
 
       {/* Sélecteur d'option */}
       <div className="flex gap-2 px-5 mt-6">
-        {[{ id: "achat", l: "Achat" }, { id: "psge", l: `Tout inclus · ${quote.duree} mois` }].map((o) => (
+        {[{ id: "achat", l: "Achat" }, { id: "psge", l: `Location · ${quote.duree} mois` }].map((o) => (
           <button key={o.id} onClick={() => setOption(o.id)} className="flex-1 font-bold"
             style={{ padding: "12px 0", borderRadius: 14, fontSize: 14, background: option === o.id ? C.gold : "rgba(255,255,255,0.07)", color: option === o.id ? C.navy : C.cream }}>
             {o.l}
@@ -1226,11 +1237,11 @@ function ClientPresentation({ quote, settings, onClose }) {
         </div>
       ) : (
         <div className="px-5 mt-8 text-center">
-          <div style={{ fontSize: 13, letterSpacing: "0.15em", color: C.gold, fontWeight: 700 }}>PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE</div>
+          <div style={{ fontSize: 13, letterSpacing: "0.15em", color: C.gold, fontWeight: 700 }}>FORMULE LOCATION TOUT INCLUS</div>
           <div style={{ ...serif, fontSize: 58, fontWeight: 700, color: C.gold, marginTop: 20, lineHeight: 1 }}>{fmt0(t.mensTotalTTC)}</div>
           <div style={{ fontSize: 15, color: "rgba(250,247,242,0.7)", marginTop: 6 }}>TTC par mois · engagement {quote.duree} mois</div>
           <div className="flex flex-col gap-3 mt-10 text-left">
-            {["Matériel professionnel installé et paramétré", "Maintenance et assistance incluses", "Évolutions de votre système provisionnées", "Un seul montant mensuel, sans surprise"].map((x, i) => (
+            {["Matériel professionnel installé et paramétré", "Maintenance annuelle incluse", "Assistance et suivi FOLONEO", "Un seul montant mensuel, sans surprise"].map((x, i) => (
               <div key={i} className="flex items-center gap-3" style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "13px 16px" }}>
                 <CheckCircle2 size={18} color={C.gold} />
                 <span style={{ fontSize: 14 }}>{x}</span>
