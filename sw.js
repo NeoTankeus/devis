@@ -1,4 +1,4 @@
-const CACHE = "foloneo-devis-v5";
+const CACHE = "foloneo-devis-v8";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
   "https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js",
@@ -15,10 +15,18 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
-  e.respondWith(
-    caches.match(e.request, { ignoreSearch: false }).then((cached) => {
-      if (cached) return cached;
-      return fetch(e.request).catch(() => caches.match("./index.html"));
-    })
-  );
+  const isShell = e.request.mode === "navigate" || new URL(e.request.url).pathname.endsWith("/index.html");
+  if (isShell) {
+    // RÉSEAU D'ABORD : l'app se met à jour automatiquement à chaque lancement connecté
+    e.respondWith(
+      fetch(e.request).then((r) => {
+        const copy = r.clone();
+        caches.open(CACHE).then((c) => c.put("./index.html", copy));
+        return r;
+      }).catch(() => caches.match("./index.html"))
+    );
+  } else {
+    // Cache d'abord pour les librairies (rapidité + hors-ligne)
+    e.respondWith(caches.match(e.request).then((c) => c || fetch(e.request)));
+  }
 });

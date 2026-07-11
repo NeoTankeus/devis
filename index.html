@@ -263,10 +263,106 @@ const eurPdf = (n) => {
   const s = (isFinite(n) ? n : 0).toFixed(2).replace(".", ",");
   return s.replace(/\B(?=(\d{3})+(?=,))/g, " ") + " €";
 };
+// Convertit une URL d'image web en dataURL — cascade : direct, puis proxys d'images publics
+const fetchOneImage = async (u) => {
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(u, { mode: "cors", signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!r.ok) return null;
+    const blob = await r.blob();
+    if (!blob.type.startsWith("image/")) return null;
+    return await new Promise((res) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = () => res(null);
+      fr.readAsDataURL(blob);
+    });
+  } catch { return null; }
+};
+const urlToDataUrl = async (url) => {
+  const enc = encodeURIComponent(url);
+  const attempts = [
+    url, // 1) tentative directe (si le serveur l'autorise)
+    `https://wsrv.nl/?url=${enc}&w=320&h=320&fit=contain&cbg=white&output=jpg`, // 2) proxy d'images wsrv.nl
+    `https://api.allorigins.win/raw?url=${enc}`, // 3) proxy générique en dernier recours
+  ];
+  for (const u of attempts) {
+    const d = await fetchOneImage(u);
+    if (d) return d;
+  }
+  return null;
+};
+// Normalise toute image en carré JPEG sur fond blanc (format sûr pour le PDF)
+const normalizeForPdf = (dataUrl) =>
+  new Promise((res) => {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const S = 300;
+          const c = document.createElement("canvas");
+          c.width = S; c.height = S;
+          const ctx = c.getContext("2d");
+          ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, S, S);
+          const sc = Math.min(S / img.width, S / img.height) * 0.88;
+          const w = img.width * sc, h = img.height * sc;
+          ctx.drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
+          res(c.toDataURL("image/jpeg", 0.85));
+        } catch { res(null); }
+      };
+      img.onerror = () => res(null);
+      img.src = dataUrl;
+    } catch { res(null); }
+  });
+// Textes de présentation par catégorie (voix FOLONEO, sans marques ni références)
+const PDF_BLOCS = {
+  alarme: {
+    titre: "Protection contre l'intrusion",
+    texte: "Des détecteurs surveillent en permanence les accès et les volumes de votre site. À la moindre tentative d'intrusion, la centrale déclenche la sirène, vous alerte instantanément sur votre smartphone et permet une levée de doute immédiate. Vous armez et désarmez votre système où que vous soyez, en toute simplicité.",
+  },
+  video: {
+    titre: "Vidéosurveillance",
+    texte: "Des caméras haute définition couvrent les points stratégiques de votre site, de jour comme de nuit. Vous visualisez vos images en direct depuis votre téléphone, où que vous soyez, et retrouvez facilement un événement enregistré. Un puissant effet dissuasif, et des preuves exploitables en cas d'incident.",
+  },
+  acces: {
+    titre: "Contrôle d'accès",
+    texte: "Le contrôle d'accès vous permet de décider qui entre, où et quand. Badges, codes ou lecteurs sécurisés : vous gardez la maîtrise totale des accès à vos locaux, avec un historique complet des passages.",
+  },
+  interphonie: {
+    titre: "Interphonie vidéo",
+    texte: "L'interphonie vidéo vous permet d'identifier vos visiteurs et de leur ouvrir à distance, depuis le moniteur ou directement sur votre smartphone. Le confort au quotidien, la sécurité à chaque visite.",
+  },
+  incendie: {
+    titre: "Détection incendie",
+    texte: "La détection incendie veille 24h/24 : fumée ou chaleur anormale, vous êtes alerté immédiatement, sur place comme à distance. La protection des personnes avant tout.",
+  },
+  _mensuel: {
+    titre: "Télésurveillance 24h/24 et 7j/7",
+    texte: "Votre système est relié en permanence à nos centres de télésurveillance partenaires certifiés APSAD P5. En cas d'alarme, des opérateurs professionnels effectuent la levée de doute et déclenchent les actions convenues : appel, intervention, prévenance des forces de l'ordre. Vous êtes protégé, même quand vous dormez.",
+  },
+  _autre: {
+    titre: "Équipements complémentaires",
+    texte: "Des équipements sélectionnés par nos soins viennent renforcer et compléter votre installation, pour une protection cohérente et évolutive.",
+  },
+};
 const exportQuotePdf = async (q, settings) => {
   const jsPDF = window.jspdf && window.jspdf.jsPDF;
   if (!jsPDF) { window.alert("Module PDF non chargé. Vérifie ta connexion internet puis réessaie."); return false; }
   const t = computeQuote(q, settings);
+  // Préchargement des photos produits (pour les pages de présentation)
+  const imgs = {};
+  const uniques = [];
+  q.lignes.forEach((l) => { if (l.cat !== "prestation" && !uniques.some((u) => u.pid === l.pid)) uniques.push(l); });
+  await Promise.all(uniques.map(async (l) => {
+    const src = l.photo || l.img;
+    if (!src) return;
+    const dataUrl = src.startsWith("data:") ? src : await urlToDataUrl(src);
+    if (!dataUrl) return;
+    const norm = await normalizeForPdf(dataUrl);
+    if (norm) imgs[l.pid] = norm;
+  }));
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const W = 595.28;
   const navy = [10, 22, 40], gold = [201, 169, 97], grey = [107, 114, 128], cream = [250, 247, 242], dark = [10, 22, 40];
@@ -374,6 +470,107 @@ const exportQuotePdf = async (q, settings) => {
   doc.setDrawColor(200, 195, 185); doc.setLineWidth(0.8);
   doc.rect(40, y + 18, 220, 60);
 
+  /* ---------- PAGES DE PRÉSENTATION DU SYSTÈME ---------- */
+  try {
+    // Regrouper les lignes par bloc (catégories intégrées, télésurveillance, autres) — hors prestations
+    const ordre = ["alarme", "video", "acces", "interphonie", "incendie"];
+    const blocs = [];
+    ordre.forEach((cid) => {
+      const ls = q.lignes.filter((l) => !l.mensuel && l.cat === cid);
+      if (ls.length) blocs.push({ ...PDF_BLOCS[cid], lignes: ls });
+    });
+    const lsAutres = q.lignes.filter((l) => !l.mensuel && l.cat !== "prestation" && !ordre.includes(l.cat));
+    if (lsAutres.length) blocs.push({ ...PDF_BLOCS._autre, lignes: lsAutres });
+    const lsMens = q.lignes.filter((l) => l.mensuel);
+    if (lsMens.length) blocs.push({ ...PDF_BLOCS._mensuel, lignes: lsMens });
+
+    if (blocs.length) {
+      doc.addPage();
+      // Bandeau
+      doc.setFillColor(...navy); doc.rect(0, 0, W, 74, "F");
+      doc.setTextColor(...cream); doc.setFont("helvetica", "bold"); doc.setFontSize(17);
+      doc.text("VOTRE PROJET DE SÉCURITÉ", 40, 38);
+      doc.setFontSize(8); doc.setTextColor(...gold);
+      doc.text("UNE PROTECTION PENSÉE POUR VOUS, INSTALLÉE ET SUIVIE PAR FOLONEO", 40, 56);
+      let py = 100;
+      // Introduction savoir-faire
+      doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(...dark);
+      const intro = "FOLONEO conçoit et installe des systèmes de sécurité électronique sur mesure, pour les particuliers comme pour les professionnels. Chaque projet est étudié, installé et suivi par nos soins, avec une exigence simple : que vous n'ayez plus à y penser. Voici ce que le système que nous vous proposons va changer pour vous.";
+      const introLines = doc.splitTextToSize(intro, W - 80);
+      doc.text(introLines, 40, py);
+      py += introLines.length * 13 + 14;
+
+      const newPageIfNeeded = (needed) => {
+        if (py + needed > 770) { doc.addPage(); py = 56; }
+      };
+
+      blocs.forEach((b) => {
+        const uniq = [];
+        b.lignes.forEach((l) => { if (!uniq.some((u) => u.pid === l.pid)) uniq.push(l); });
+        const nbImgs = Math.min(uniq.length, 5);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(9.5);
+        const txtLines = doc.splitTextToSize(b.texte, W - 80);
+        const imgRowH = nbImgs > 0 ? 108 : 0;
+        newPageIfNeeded(30 + txtLines.length * 12 + imgRowH + 20);
+        // Titre du bloc
+        doc.setFont("helvetica", "bold"); doc.setFontSize(12.5); doc.setTextColor(...navy);
+        doc.text(b.titre, 40, py);
+        doc.setDrawColor(...gold); doc.setLineWidth(1.4);
+        doc.line(40, py + 5, 40 + doc.getTextWidth(b.titre), py + 5);
+        py += 20;
+        // Texte
+        doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(70, 78, 92);
+        doc.text(txtLines, 40, py);
+        py += txtLines.length * 12 + 10;
+        // Images des produits (sans référence : libellé client uniquement)
+        if (nbImgs > 0) {
+          const size = 72;
+          const gap = (W - 80 - nbImgs * size) / Math.max(nbImgs - 1, 1);
+          uniq.slice(0, 5).forEach((l, i) => {
+            const x = 40 + i * (size + (nbImgs > 1 ? gap : 0));
+            try {
+              if (imgs[l.pid]) {
+                doc.setDrawColor(...gold); doc.setLineWidth(1);
+                doc.roundedRect(x, py, size, size, 6, 6, "S");
+                doc.addImage(imgs[l.pid], "JPEG", x + 2, py + 2, size - 4, size - 4);
+              } else {
+                doc.setFillColor(...navy);
+                doc.roundedRect(x, py, size, size, 6, 6, "F");
+                doc.setTextColor(...gold); doc.setFont("helvetica", "bold"); doc.setFontSize(22);
+                doc.text((l.lc || l.n || "?").charAt(0).toUpperCase(), x + size / 2, py + size / 2 + 8, { align: "center" });
+              }
+            } catch (e) { /* image illisible : on continue */ }
+            // Légende (2 lignes max)
+            doc.setFont("helvetica", "normal"); doc.setFontSize(6.6); doc.setTextColor(...grey);
+            const cap = doc.splitTextToSize(l.lc || "", size + 6).slice(0, 2);
+            doc.text(cap, x + size / 2, py + size + 10, { align: "center" });
+          });
+          py += size + 32;
+        }
+        py += 6;
+      });
+
+      // Engagement FOLONEO
+      newPageIfNeeded(120);
+      doc.setFillColor(...cream); doc.setDrawColor(...navy); doc.setLineWidth(1);
+      doc.roundedRect(40, py, W - 80, 104, 8, 8, "FD");
+      doc.setTextColor(...navy); doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+      doc.text("L'ENGAGEMENT FOLONEO", 56, py + 20);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...dark);
+      const engagements = [
+        "Installateur certifié NFA2P — le référentiel des assureurs",
+        "Télésurveillance via plusieurs centres partenaires certifiés APSAD P5",
+        "Vous êtes propriétaire de votre matériel, sans location imposée",
+        "Un interlocuteur unique et un accès direct au dirigeant",
+      ];
+      engagements.forEach((e, i) => {
+        doc.setFillColor(...gold);
+        doc.circle(62, py + 36 + i * 16, 2.2, "F");
+        doc.text(e, 72, py + 39 + i * 16);
+      });
+    }
+  } catch (e) { /* la présentation ne doit jamais empêcher l'export du devis */ }
+
   // Pied de page (toutes les pages)
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
@@ -389,7 +586,7 @@ const exportQuotePdf = async (q, settings) => {
   try {
     const file = new File([blob], fileName, { type: "application/pdf" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: fileName });
+      await navigator.share({ files: [file] }); // pas de titre : iOS l'ajouterait en pièce jointe .txt
       return true;
     }
   } catch (e) { if (e && e.name === "AbortError") return true; }
@@ -928,6 +1125,7 @@ function QuoteList({ quotes, settings, onOpen, onNew }) {
 function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDuplicate, onPick, onPresent, log }) {
   const t = computeQuote(quote, settings);
   const mc = settings.modeClient;
+  const [exporting, setExporting] = useState(false);
   const setLigne = (pid, patch) =>
     onPatch({ lignes: quote.lignes.map((l) => (l.pid === pid ? { ...l, ...patch } : l)).filter((l) => l.qty > 0) });
 
@@ -1047,8 +1245,13 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
 
       <Btn variant="dark" full onClick={onPresent}><Eye size={18} /> Présentation client</Btn>
       <div style={{ height: 10 }} />
-      <Btn variant="gold" full onClick={async () => { const ok = await exportQuotePdf(quote, settings); if (ok) log(`Export PDF du devis ${quote.num}`); }}>
-        <Download size={18} /> Exporter le devis en PDF
+      <Btn variant="gold" full disabled={exporting} onClick={async () => {
+        setExporting(true);
+        const ok = await exportQuotePdf(quote, settings);
+        setExporting(false);
+        if (ok) log(`Export PDF du devis ${quote.num}`);
+      }}>
+        <Download size={18} /> {exporting ? "Préparation du PDF (photos)…" : "Exporter le devis en PDF"}
       </Btn>
       <div style={{ height: 20 }} />
     </div>
@@ -1529,7 +1732,7 @@ function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
       </section>
 
       <p style={{ fontSize: 12, color: C.grey, textAlign: "center", marginTop: 20 }}>
-        FOLONEO · On veille, vous dormez.<br />Devis Terrain v1.0
+        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v8</b> — PDF avec présentation & photos
       </p>
     </div>
   );
