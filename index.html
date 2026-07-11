@@ -349,18 +349,31 @@ const PDF_BLOCS = {
     texte: "Des équipements sélectionnés par nos soins viennent renforcer et compléter votre installation, pour une protection cohérente et évolutive.",
   },
 };
-const exportQuotePdf = async (q, settings) => {
+const exportQuotePdf = async (q, settings, catalog) => {
   const jsPDF = window.jspdf && window.jspdf.jsPDF;
   if (!jsPDF) { window.alert("Module PDF non chargé. Vérifie ta connexion internet puis réessaie."); return false; }
   const t = computeQuote(q, settings);
-  // Préchargement des photos produits (pour les pages de présentation)
+  // Préchargement des photos produits : ligne du devis → catalogue actuel → recherche web en direct
   const imgs = {};
+  const catById = {};
+  (catalog || []).forEach((p) => { catById[p.id] = p; });
   const uniques = [];
   q.lignes.forEach((l) => { if (l.cat !== "prestation" && !uniques.some((u) => u.pid === l.pid)) uniques.push(l); });
   await Promise.all(uniques.map(async (l) => {
-    const src = l.photo || l.img;
-    if (!src) return;
-    const dataUrl = src.startsWith("data:") ? src : await urlToDataUrl(src);
+    const cp = catById[l.pid];
+    let src = l.photo || l.img || (cp && (cp.photo || cp.img)) || null;
+    let dataUrl = null;
+    if (src) dataUrl = src.startsWith("data:") ? src : await urlToDataUrl(src);
+    if (!dataUrl) {
+      // Aucune photo enregistrée : on la cherche sur le web comme dans le catalogue
+      const base = `${l.m && l.m !== "FOLONEO" && l.m !== "Autre" ? l.m + " " : ""}${l.n || l.lc || ""}`.trim();
+      if (base) {
+        for (const cand of [bingThumb(base, 2), bingThumb(base + " produit", 1)]) {
+          dataUrl = await urlToDataUrl(cand);
+          if (dataUrl) break;
+        }
+      }
+    }
     if (!dataUrl) return;
     const norm = await normalizeForPdf(dataUrl);
     if (norm) imgs[l.pid] = norm;
@@ -442,18 +455,49 @@ const exportQuotePdf = async (q, settings) => {
   totLine(`TVA ${settings.tva} %`, eurPdf(t.tva), false);
   totLine("TOTAL TTC", eurPdf(t.totalTTC), true, true);
 
-  // Encadré location
-  y += 8;
-  if (y > 700) { doc.addPage(); y = 50; }
+  // Double proposition : ACHAT ou PSGE FULL OPTIONS
+  y += 10;
+  if (y > 580) { doc.addPage(); y = 50; }
+  doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...navy);
+  doc.text("VOTRE FORMULE, AU CHOIX :", 40, y);
+  y += 12;
+  const bw = (W - 80 - 36) / 2;
+  const bh = 118;
+  // Option 1 — Achat
+  doc.setDrawColor(...navy); doc.setFillColor(255, 255, 255); doc.setLineWidth(1.2);
+  doc.roundedRect(40, y, bw, bh, 8, 8, "FD");
+  doc.setFontSize(7.5); doc.setTextColor(...gold); doc.setFont("helvetica", "bold");
+  doc.text("OPTION 1", 54, y + 20);
+  doc.setFontSize(12); doc.setTextColor(...navy);
+  doc.text("ACHAT", 54, y + 36);
+  doc.setFontSize(17);
+  doc.text(eurPdf(t.totalTTC), 54, y + 60);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...grey);
+  doc.text("TTC", 54, y + 73);
+  doc.setFont("helvetica", "bold"); doc.setTextColor(...navy);
+  doc.text(`Acompte 50 % à la commande : ${eurPdf(t.totalTTC / 2)} TTC`, 54, y + 88);
+  doc.setFont("helvetica", "normal"); doc.setTextColor(...grey);
+  doc.text("Solde à la livraison", 54, y + 100);
+  // « ou »
+  const cx = 40 + bw + 18;
+  doc.setFillColor(...gold); doc.circle(cx, y + bh / 2, 14, "F");
+  doc.setTextColor(...navy); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("ou", cx, y + bh / 2 + 4, { align: "center" });
+  // Option 2 — PSGE Full Options
+  const x2 = 40 + bw + 36;
   doc.setFillColor(...cream); doc.setDrawColor(...gold); doc.setLineWidth(1.2);
-  doc.roundedRect(40, y, W - 80, 58, 8, 8, "FD");
-  doc.setTextColor(...gold); doc.setFont("helvetica", "bold"); doc.setFontSize(8.5);
-  doc.text("FORMULE LOCATION TOUT INCLUS", 56, y + 20);
-  doc.setTextColor(...navy); doc.setFontSize(14);
-  doc.text(`${eurPdf(t.mensTotalTTC)} / mois TTC`, 56, y + 40);
-  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...grey);
-  doc.text(`sur ${q.duree} mois — maintenance annuelle incluse`, 240, y + 40);
-  y += 78;
+  doc.roundedRect(x2, y, bw, bh, 8, 8, "FD");
+  doc.setFontSize(7.5); doc.setTextColor(...gold); doc.setFont("helvetica", "bold");
+  doc.text("OPTION 2", x2 + 14, y + 20);
+  doc.setTextColor(...navy); doc.setFontSize(9);
+  const psgeTitle = doc.splitTextToSize("PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE — FULL OPTIONS", bw - 28);
+  doc.text(psgeTitle, x2 + 14, y + 33);
+  doc.setFontSize(15);
+  doc.text(`${eurPdf(t.mensTotalTTC)} /mois TTC`, x2 + 14, y + 64);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(7.2); doc.setTextColor(...grey);
+  const psgeDesc = doc.splitTextToSize(`Sur ${q.duree} mois · pièces, main d'œuvre et tous déplacements inclus · évolution technologique proposée en milieu de contrat.`, bw - 28);
+  doc.text(psgeDesc, x2 + 14, y + 78);
+  y += bh + 16;
 
   // Encadré télésurveillance / abonnements (facturés à part)
   if (t.abonnementHT > 0) {
@@ -590,9 +634,10 @@ const exportQuotePdf = async (q, settings) => {
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i);
     doc.setFontSize(7.5); doc.setTextColor(...grey); doc.setFont("helvetica", "normal");
+    doc.text("Règlement par virement — IBAN : FR76 3000 4001 5700 0101 8605 757", W / 2, 800, { align: "center" });
     doc.text("FOLONEO EURL — Toulon  ·  04 87 86 01 19  ·  contact@foloneo.fr  ·  www.foloneo.fr", W / 2, 812, { align: "center" });
     doc.text("Devis établi sous réserve de visite technique.", W / 2, 824, { align: "center" });
-    doc.setFontSize(6); doc.text("v11 · " + i + "/" + pages, W - 30, 824, { align: "right" });
+    doc.setFontSize(6); doc.text("v13 · " + i + "/" + pages, W - 30, 824, { align: "right" });
   }
 
   const cleanName = (q.client.nom || "").replace(/[^\wÀ-ÿ-]+/g, "_").slice(0, 30);
@@ -1214,7 +1259,7 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
       <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
         <div className="flex items-center gap-2 mb-3" style={{ fontWeight: 700, fontSize: 14 }}><CircleDollarSign size={16} color={C.gold} /> AJUSTEMENTS</div>
         <Field label="REMISE %"><input style={inputStyle} type="number" inputMode="decimal" value={quote.remisePct} onChange={(e) => onPatch({ remisePct: e.target.value })} /></Field>
-        <Field label="DURÉE LOCATION">
+        <Field label="DURÉE PSGE (LOCATION)">
           <div className="flex gap-2">
             {[36, 48, 60].map((d) => (
               <button key={d} onClick={() => onPatch({ duree: d })} className="flex-1 font-bold"
@@ -1233,12 +1278,13 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
           <div style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(250,247,242,0.6)", fontWeight: 700 }}>ACHAT</div>
           <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.totalHT)}</div>
           <div style={{ fontSize: 11, color: "rgba(250,247,242,0.6)" }}>HT · {fmt0(t.totalTTC)} TTC</div>
-          {t.remise > 0 && <div style={{ fontSize: 11, color: C.gold, marginTop: 6 }}>dont remise {fmt0(t.remise)}</div>}
+          <div style={{ fontSize: 10.5, color: C.gold, marginTop: 4 }}>Acompte 50 % : {fmt0(t.totalTTC / 2)} TTC</div>
+          {t.remise > 0 && <div style={{ fontSize: 11, color: C.gold, marginTop: 4 }}>dont remise {fmt0(t.remise)}</div>}
         </div>
         <div style={{ background: `linear-gradient(150deg, ${C.gold}, #B08F45)`, borderRadius: 18, padding: 16, color: C.navy }}>
-          <div className="flex items-center gap-1" style={{ fontSize: 11, letterSpacing: "0.12em", fontWeight: 800 }}><Sparkles size={12} /> LOCATION {quote.duree} MOIS</div>
+          <div className="flex items-center gap-1" style={{ fontSize: 10.5, letterSpacing: "0.08em", fontWeight: 800 }}><Sparkles size={12} /> PSGE FULL OPTIONS · {quote.duree} MOIS</div>
           <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.mensTotalTTC)}<span style={{ fontSize: 13 }}>/mois</span></div>
-          <div style={{ fontSize: 11, opacity: 0.75 }}>TTC · maintenance {Math.round(t.tauxLocation * 100)} %/an incluse</div>
+          <div style={{ fontSize: 10.5, opacity: 0.8, lineHeight: 1.3 }}>TTC · pièces, main d'œuvre & déplacements inclus</div>
         </div>
       </div>
 
@@ -1268,7 +1314,7 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
       <div style={{ height: 10 }} />
       <Btn variant="gold" full disabled={exporting} onClick={async () => {
         setExporting(true);
-        const ok = await exportQuotePdf(quote, settings);
+        const ok = await exportQuotePdf(quote, settings, catalog);
         setExporting(false);
         if (ok) log(`Export PDF du devis ${quote.num}`);
       }}>
@@ -1753,7 +1799,7 @@ function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
       </section>
 
       <p style={{ fontSize: 12, color: C.grey, textAlign: "center", marginTop: 20 }}>
-        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v11</b> — PDF avec présentation & photos
+        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v13</b> — PDF avec présentation & photos
       </p>
     </div>
   );
@@ -1783,7 +1829,7 @@ function ClientPresentation({ quote, settings, onClose }) {
 
       {/* Sélecteur d'option */}
       <div className="flex gap-2 px-5 mt-6">
-        {[{ id: "achat", l: "Achat" }, { id: "psge", l: `Location · ${quote.duree} mois` }].map((o) => (
+        {[{ id: "achat", l: "Achat" }, { id: "psge", l: `PSGE · ${quote.duree} mois` }].map((o) => (
           <button key={o.id} onClick={() => setOption(o.id)} className="flex-1 font-bold"
             style={{ padding: "12px 0", borderRadius: 14, fontSize: 14, background: option === o.id ? C.gold : "rgba(255,255,255,0.07)", color: option === o.id ? C.navy : C.cream }}>
             {o.l}
@@ -1824,14 +1870,14 @@ function ClientPresentation({ quote, settings, onClose }) {
         </div>
       ) : (
         <div className="px-5 mt-8 text-center">
-          <div style={{ fontSize: 13, letterSpacing: "0.15em", color: C.gold, fontWeight: 700 }}>FORMULE LOCATION TOUT INCLUS</div>
-          <div style={{ ...serif, fontSize: 58, fontWeight: 700, color: C.gold, marginTop: 20, lineHeight: 1 }}>{fmt0(t.mensTotalTTC)}</div>
+          <div style={{ fontSize: 12, letterSpacing: "0.12em", color: C.gold, fontWeight: 700, lineHeight: 1.5 }}>PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE<br />FULL OPTIONS</div>
+          <div style={{ ...serif, fontSize: 58, fontWeight: 700, color: C.gold, marginTop: 18, lineHeight: 1 }}>{fmt0(t.mensTotalTTC)}</div>
           <div style={{ fontSize: 15, color: "rgba(250,247,242,0.7)", marginTop: 6 }}>TTC par mois · engagement {quote.duree} mois</div>
           {t.abonnementTTC > 0 && (
             <div style={{ fontSize: 14, color: C.gold, marginTop: 10, fontWeight: 700 }}>+ {fmt(t.abonnementTTC)}/mois TTC de télésurveillance (facturée à part)</div>
           )}
           <div className="flex flex-col gap-3 mt-10 text-left">
-            {["Matériel professionnel installé et paramétré", "Maintenance annuelle incluse", "Assistance et suivi FOLONEO", "Un seul montant mensuel, sans surprise"].map((x, i) => (
+            {["Pièces, main d'œuvre et tous déplacements inclus", "Évolution technologique proposée en milieu de contrat", "Matériel professionnel installé et paramétré", "Un seul montant mensuel, sans surprise"].map((x, i) => (
               <div key={i} className="flex items-center gap-3" style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "13px 16px" }}>
                 <CheckCircle2 size={18} color={C.gold} />
                 <span style={{ fontSize: 14 }}>{x}</span>
