@@ -255,7 +255,11 @@ const computeQuote = (q, settings) => {
   const totalLocation = totalTTC * (1 + tauxLocation * annees);
   const mensTotalTTC = duree > 0 ? totalLocation / duree : 0;
   const mensTotalHT = mensTotalTTC / (1 + settings.tva / 100);
-  return { materiel, coutAchat, remise, totalHT, tva, totalTTC, marge, tauxMarge, tauxLocation, totalLocation, mensTotalTTC, mensTotalHT, abonnementHT, abonnementTTC };
+  // Facturation trimestrielle
+  const trimestreTTC = mensTotalTTC * 3;
+  const nbTrimestres = Math.max(1, Math.round(duree / 3));
+  const nbTrimestresFactures = q.trimestreOffert ? nbTrimestres - 1 : nbTrimestres;
+  return { materiel, coutAchat, remise, totalHT, tva, totalTTC, marge, tauxMarge, tauxLocation, totalLocation, mensTotalTTC, mensTotalHT, abonnementHT, abonnementTTC, trimestreTTC, nbTrimestres, nbTrimestresFactures };
 };
 
 /* ============================ EXPORT PDF DU DEVIS ============================ */
@@ -455,21 +459,23 @@ const exportQuotePdf = async (q, settings, catalog) => {
   totLine(`TVA ${settings.tva} %`, eurPdf(t.tva), false);
   totLine("TOTAL TTC", eurPdf(t.totalTTC), true, true);
 
-  // Double proposition : ACHAT ou PSGE FULL OPTIONS
+  // Proposition : ACHAT seul (particulier) ou ACHAT ou PSGE (professionnel)
   y += 10;
   if (y > 580) { doc.addPage(); y = 50; }
+  const isPro = !!q.pro;
+  const isTrim = q.periodicite === "trimestriel";
   doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...navy);
-  doc.text("VOTRE FORMULE, AU CHOIX :", 40, y);
+  doc.text(isPro ? "VOTRE FORMULE, AU CHOIX :" : "VOTRE FORMULE :", 40, y);
   y += 12;
-  const bw = (W - 80 - 36) / 2;
+  const bw = isPro ? (W - 80 - 36) / 2 : W - 80;
   const bh = 118;
   // Option 1 — Achat
   doc.setDrawColor(...navy); doc.setFillColor(255, 255, 255); doc.setLineWidth(1.2);
   doc.roundedRect(40, y, bw, bh, 8, 8, "FD");
   doc.setFontSize(7.5); doc.setTextColor(...gold); doc.setFont("helvetica", "bold");
-  doc.text("OPTION 1", 54, y + 20);
+  doc.text(isPro ? "OPTION 1" : "ACHAT COMPTANT", 54, y + 20);
   doc.setFontSize(12); doc.setTextColor(...navy);
-  doc.text("ACHAT", 54, y + 36);
+  if (isPro) doc.text("ACHAT", 54, y + 36);
   doc.setFontSize(17);
   doc.text(eurPdf(t.totalTTC), 54, y + 60);
   doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...grey);
@@ -478,26 +484,48 @@ const exportQuotePdf = async (q, settings, catalog) => {
   doc.text(`Acompte 50 % à la commande : ${eurPdf(t.totalTTC / 2)} TTC`, 54, y + 88);
   doc.setFont("helvetica", "normal"); doc.setTextColor(...grey);
   doc.text("Solde à la livraison", 54, y + 100);
-  // « ou »
-  const cx = 40 + bw + 18;
-  doc.setFillColor(...gold); doc.circle(cx, y + bh / 2, 14, "F");
-  doc.setTextColor(...navy); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
-  doc.text("ou", cx, y + bh / 2 + 4, { align: "center" });
-  // Option 2 — PSGE Full Options
-  const x2 = 40 + bw + 36;
-  doc.setFillColor(...cream); doc.setDrawColor(...gold); doc.setLineWidth(1.2);
-  doc.roundedRect(x2, y, bw, bh, 8, 8, "FD");
-  doc.setFontSize(7.5); doc.setTextColor(...gold); doc.setFont("helvetica", "bold");
-  doc.text("OPTION 2", x2 + 14, y + 20);
-  doc.setTextColor(...navy); doc.setFontSize(9);
-  const psgeTitle = doc.splitTextToSize("PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE — FULL OPTIONS", bw - 28);
-  doc.text(psgeTitle, x2 + 14, y + 33);
-  doc.setFontSize(15);
-  doc.text(`${eurPdf(t.mensTotalTTC)} /mois TTC`, x2 + 14, y + 64);
-  doc.setFont("helvetica", "normal"); doc.setFontSize(7.2); doc.setTextColor(...grey);
-  const psgeDesc = doc.splitTextToSize(`Sur ${q.duree} mois · pièces, main d'œuvre et tous déplacements inclus · évolution technologique proposée en milieu de contrat.`, bw - 28);
-  doc.text(psgeDesc, x2 + 14, y + 78);
-  y += bh + 16;
+  if (isPro) {
+    // « ou »
+    const cx = 40 + bw + 18;
+    doc.setFillColor(...gold); doc.circle(cx, y + bh / 2, 14, "F");
+    doc.setTextColor(...navy); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+    doc.text("ou", cx, y + bh / 2 + 4, { align: "center" });
+    // Option 2 — PSGE Full Options
+    const x2 = 40 + bw + 36;
+    doc.setFillColor(...cream); doc.setDrawColor(...gold); doc.setLineWidth(1.2);
+    doc.roundedRect(x2, y, bw, bh, 8, 8, "FD");
+    doc.setFontSize(7.5); doc.setTextColor(...gold); doc.setFont("helvetica", "bold");
+    doc.text("OPTION 2", x2 + 14, y + 20);
+    doc.setTextColor(...navy); doc.setFontSize(9);
+    const psgeTitle = doc.splitTextToSize("PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE — FULL OPTIONS", bw - 28);
+    doc.text(psgeTitle, x2 + 14, y + 33);
+    doc.setFontSize(isTrim ? 13 : 15);
+    doc.text(isTrim ? `${eurPdf(t.trimestreTTC)} /trimestre TTC` : `${eurPdf(t.mensTotalTTC)} /mois TTC`, x2 + 14, y + 62);
+    if (isTrim && q.trimestreOffert) {
+      doc.setFontSize(8.5); doc.setTextColor(...gold);
+      doc.text(`1 TRIMESTRE OFFERT — ${t.nbTrimestresFactures} trimestres facturés au lieu de ${t.nbTrimestres}`, x2 + 14, y + 74);
+    }
+    doc.setFont("helvetica", "normal"); doc.setFontSize(7.2); doc.setTextColor(...grey);
+    const psgeDesc = doc.splitTextToSize(`Sur ${q.duree} mois · facturation ${isTrim ? "trimestrielle" : "mensuelle"} · pièces, main d'œuvre et tous déplacements inclus · évolution technologique proposée en milieu de contrat. Offre réservée aux professionnels.`, bw - 28);
+    doc.text(psgeDesc, x2 + 14, y + (isTrim && q.trimestreOffert ? 85 : 76));
+  }
+  y += bh + 14;
+
+  // Argumentaire commercial PSGE (professionnels uniquement)
+  if (isPro) {
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5);
+    const expl = "Sur la durée, la formule PSGE représente un montant global supérieur à l'achat — et c'est normal : ce n'est pas un financement, c'est un service complet. Votre redevance inclut une maintenance illimitée, pièces, main d'œuvre et tous déplacements compris. En cas de panne hors garantie, votre matériel n'est pas réparé : il est remplacé par du neuf. En milieu de contrat, les nouveautés technologiques vous sont proposées et intégrées sans changement de tarif. Et parce qu'elle est réservée aux professionnels, la PSGE passe intégralement en charges d'exploitation : trésorerie préservée, budget sécurité maîtrisé au centime près — parlez-en à votre expert-comptable. Vous ne payez pas plus cher : vous payez la tranquillité totale.";
+    const explLines = doc.splitTextToSize(expl, W - 108);
+    const bhE = explLines.length * 11 + 42;
+    if (y + bhE > 750) { doc.addPage(); y = 50; }
+    doc.setFillColor(...cream); doc.setDrawColor(...gold); doc.setLineWidth(1);
+    doc.roundedRect(40, y, W - 80, bhE, 8, 8, "FD");
+    doc.setTextColor(...navy); doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+    doc.text("POURQUOI LA PSGE FULL OPTIONS ? PARCE QU'ELLE FAIT BIEN PLUS QUE FINANCER.", 54, y + 20);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(...dark);
+    doc.text(explLines, 54, y + 36);
+    y += bhE + 14;
+  }
 
   // Encadré télésurveillance / abonnements (facturés à part)
   if (t.abonnementHT > 0) {
@@ -637,7 +665,7 @@ const exportQuotePdf = async (q, settings, catalog) => {
     doc.text("Règlement par virement — IBAN : FR76 3000 4001 5700 0101 8605 757", W / 2, 800, { align: "center" });
     doc.text("FOLONEO EURL — Toulon  ·  04 87 86 01 19  ·  contact@foloneo.fr  ·  www.foloneo.fr", W / 2, 812, { align: "center" });
     doc.text("Devis établi sous réserve de visite technique.", W / 2, 824, { align: "center" });
-    doc.setFontSize(6); doc.text("v13 · " + i + "/" + pages, W - 30, 824, { align: "right" });
+    doc.setFontSize(6); doc.text("v14 · " + i + "/" + pages, W - 30, 824, { align: "right" });
   }
 
   const cleanName = (q.client.nom || "").replace(/[^\wÀ-ÿ-]+/g, "_").slice(0, 30);
@@ -881,7 +909,7 @@ function App() {
     const q = {
       id: uid(), num, date: today(), statut: "brouillon",
       client: { nom: "", dirigeant: "", adresse: "", ville: "", tel: "", email: "", siret: "" },
-      lignes: [], remisePct: 0, duree: 48, notes: "",
+      lignes: [], remisePct: 0, duree: 48, pro: false, periodicite: "mensuel", trimestreOffert: false, notes: "",
     };
     setQuotes((qs) => [q, ...qs]);
     setSettings((s) => ({ ...s, seqDevis: s.seqDevis + 1 }));
@@ -1170,7 +1198,7 @@ function QuoteList({ quotes, settings, onOpen, onNew }) {
                 </div>
                 <div className="text-right">
                   <div style={{ ...serif, fontSize: 18, fontWeight: 700 }}>{fmt0(t.totalHT)} <span style={{ fontSize: 11, color: C.grey }}>HT</span></div>
-                  <div style={{ fontSize: 12, color: C.gold, fontWeight: 700 }}>ou {fmt0(t.mensTotalTTC)}/mois TTC</div>
+                  {q.pro && <div style={{ fontSize: 12, color: C.gold, fontWeight: 700 }}>ou {fmt0(t.mensTotalTTC)}/mois TTC</div>}
                 </div>
               </div>
             </button>
@@ -1259,21 +1287,59 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
       <section style={{ background: C.white, borderRadius: 16, padding: 16, border: `1px solid ${C.line}`, marginBottom: 14 }}>
         <div className="flex items-center gap-2 mb-3" style={{ fontWeight: 700, fontSize: 14 }}><CircleDollarSign size={16} color={C.gold} /> AJUSTEMENTS</div>
         <Field label="REMISE %"><input style={inputStyle} type="number" inputMode="decimal" value={quote.remisePct} onChange={(e) => onPatch({ remisePct: e.target.value })} /></Field>
-        <Field label="DURÉE PSGE (LOCATION)">
-          <div className="flex gap-2">
-            {[36, 48, 60].map((d) => (
-              <button key={d} onClick={() => onPatch({ duree: d })} className="flex-1 font-bold"
-                style={{ padding: "12px 0", borderRadius: 12, background: quote.duree === d ? C.navy : C.cream, color: quote.duree === d ? C.gold : C.navy, border: `1px solid ${quote.duree === d ? C.navy : C.line}`, fontSize: 15 }}>
-                {d} mois
-              </button>
-            ))}
+        <button onClick={() => onPatch({ pro: !quote.pro })}
+          className="flex items-center justify-between w-full mb-3"
+          style={{ background: quote.pro ? "#FDF6E9" : C.white, border: `1.5px solid ${quote.pro ? C.gold : C.line}`, borderRadius: 14, padding: "13px 16px" }}>
+          <div className="text-left">
+            <div style={{ fontSize: 14, fontWeight: 700 }}>Client professionnel</div>
+            <div style={{ fontSize: 12, color: C.grey }}>Ouvre l'offre PSGE Full Options (location réservée aux professionnels)</div>
           </div>
-        </Field>
+          <div style={{ width: 46, height: 27, borderRadius: 99, background: quote.pro ? C.gold : C.line, position: "relative", flexShrink: 0, transition: "background .2s" }}>
+            <div style={{ width: 21, height: 21, borderRadius: 99, background: C.white, position: "absolute", top: 3, left: quote.pro ? 22 : 3, transition: "left .2s" }} />
+          </div>
+        </button>
+        {quote.pro && (
+          <>
+            <Field label="DURÉE PSGE">
+              <div className="flex gap-2">
+                {[36, 48, 60].map((d) => (
+                  <button key={d} onClick={() => onPatch({ duree: d })} className="flex-1 font-bold"
+                    style={{ padding: "12px 0", borderRadius: 12, background: quote.duree === d ? C.navy : C.cream, color: quote.duree === d ? C.gold : C.navy, border: `1px solid ${quote.duree === d ? C.navy : C.line}`, fontSize: 15 }}>
+                    {d} mois
+                  </button>
+                ))}
+              </div>
+            </Field>
+            <Field label="FACTURATION">
+              <div className="flex gap-2">
+                {[{ id: "mensuel", l: "Mensuelle" }, { id: "trimestriel", l: "Trimestrielle" }].map((p) => (
+                  <button key={p.id} onClick={() => onPatch({ periodicite: p.id })} className="flex-1 font-bold"
+                    style={{ padding: "12px 0", borderRadius: 12, background: (quote.periodicite || "mensuel") === p.id ? C.navy : C.cream, color: (quote.periodicite || "mensuel") === p.id ? C.gold : C.navy, border: `1px solid ${(quote.periodicite || "mensuel") === p.id ? C.navy : C.line}`, fontSize: 15 }}>
+                    {p.l}
+                  </button>
+                ))}
+              </div>
+            </Field>
+            {quote.periodicite === "trimestriel" && (
+              <button onClick={() => onPatch({ trimestreOffert: !quote.trimestreOffert })}
+                className="flex items-center justify-between w-full mb-3"
+                style={{ background: quote.trimestreOffert ? "#FDF6E9" : C.white, border: `1.5px solid ${quote.trimestreOffert ? C.gold : C.line}`, borderRadius: 14, padding: "12px 16px" }}>
+                <div className="text-left">
+                  <div style={{ fontSize: 14, fontWeight: 700 }}>🎁 1 trimestre offert</div>
+                  <div style={{ fontSize: 12, color: C.grey }}>{t.nbTrimestresFactures} trimestres facturés au lieu de {t.nbTrimestres}</div>
+                </div>
+                <div style={{ width: 46, height: 27, borderRadius: 99, background: quote.trimestreOffert ? C.gold : C.line, position: "relative", flexShrink: 0, transition: "background .2s" }}>
+                  <div style={{ width: 21, height: 21, borderRadius: 99, background: C.white, position: "absolute", top: 3, left: quote.trimestreOffert ? 22 : 3, transition: "left .2s" }} />
+                </div>
+              </button>
+            )}
+          </>
+        )}
         <Field label="NOTES INTERNES"><textarea style={{ ...inputStyle, minHeight: 60 }} value={quote.notes} onChange={(e) => onPatch({ notes: e.target.value })} placeholder="Contraintes du site, accès, câblage…" /></Field>
       </section>
 
       {/* Double proposition — signature FOLONEO */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className={`grid ${quote.pro ? "grid-cols-2" : "grid-cols-1"} gap-3 mb-4`}>
         <div style={{ background: C.navy, borderRadius: 18, padding: 16, color: C.cream }}>
           <div style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(250,247,242,0.6)", fontWeight: 700 }}>ACHAT</div>
           <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.totalHT)}</div>
@@ -1281,11 +1347,24 @@ function QuoteEditor({ quote, settings, catalog, onBack, onPatch, onDelete, onDu
           <div style={{ fontSize: 10.5, color: C.gold, marginTop: 4 }}>Acompte 50 % : {fmt0(t.totalTTC / 2)} TTC</div>
           {t.remise > 0 && <div style={{ fontSize: 11, color: C.gold, marginTop: 4 }}>dont remise {fmt0(t.remise)}</div>}
         </div>
-        <div style={{ background: `linear-gradient(150deg, ${C.gold}, #B08F45)`, borderRadius: 18, padding: 16, color: C.navy }}>
-          <div className="flex items-center gap-1" style={{ fontSize: 10.5, letterSpacing: "0.08em", fontWeight: 800 }}><Sparkles size={12} /> PSGE FULL OPTIONS · {quote.duree} MOIS</div>
-          <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.mensTotalTTC)}<span style={{ fontSize: 13 }}>/mois</span></div>
-          <div style={{ fontSize: 10.5, opacity: 0.8, lineHeight: 1.3 }}>TTC · pièces, main d'œuvre & déplacements inclus</div>
-        </div>
+        {quote.pro && (
+          <div style={{ background: `linear-gradient(150deg, ${C.gold}, #B08F45)`, borderRadius: 18, padding: 16, color: C.navy }}>
+            <div className="flex items-center gap-1" style={{ fontSize: 10.5, letterSpacing: "0.08em", fontWeight: 800 }}><Sparkles size={12} /> PSGE FULL OPTIONS · {quote.duree} MOIS</div>
+            {quote.periodicite === "trimestriel" ? (
+              <>
+                <div style={{ ...serif, fontSize: 22, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.trimestreTTC)}<span style={{ fontSize: 12 }}>/trim.</span></div>
+                <div style={{ fontSize: 10.5, opacity: 0.8, lineHeight: 1.3 }}>
+                  TTC{quote.trimestreOffert ? ` · 1 trimestre OFFERT (${t.nbTrimestresFactures}/${t.nbTrimestres} facturés)` : " · facturation trimestrielle"}
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ ...serif, fontSize: 24, fontWeight: 700, margin: "8px 0 2px" }}>{fmt0(t.mensTotalTTC)}<span style={{ fontSize: 13 }}>/mois</span></div>
+                <div style={{ fontSize: 10.5, opacity: 0.8, lineHeight: 1.3 }}>TTC · pièces, main d'œuvre & déplacements inclus</div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Télésurveillance / abonnements — facturés à part */}
@@ -1799,7 +1878,7 @@ function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
       </section>
 
       <p style={{ fontSize: 12, color: C.grey, textAlign: "center", marginTop: 20 }}>
-        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v13</b> — PDF avec présentation & photos
+        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v14</b> — PDF avec présentation & photos
       </p>
     </div>
   );
@@ -1808,7 +1887,9 @@ function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
 /* ============================ PRÉSENTATION CLIENT ============================ */
 function ClientPresentation({ quote, settings, onClose }) {
   const t = computeQuote(quote, settings);
-  const [option, setOption] = useState("psge");
+  const [option, setOption] = useState(quote.pro ? "psge" : "achat");
+  const isTrim = quote.periodicite === "trimestriel";
+  const tabs = quote.pro ? [{ id: "achat", l: "Achat" }, { id: "psge", l: `PSGE · ${quote.duree} mois` }] : [{ id: "achat", l: "Achat" }];
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto" style={{ background: C.navy, maxWidth: 480, margin: "0 auto", color: C.cream }}>
       <div className="flex items-center justify-between px-5" style={{ paddingTop: "calc(18px + env(safe-area-inset-top))" }}>
@@ -1829,7 +1910,7 @@ function ClientPresentation({ quote, settings, onClose }) {
 
       {/* Sélecteur d'option */}
       <div className="flex gap-2 px-5 mt-6">
-        {[{ id: "achat", l: "Achat" }, { id: "psge", l: `PSGE · ${quote.duree} mois` }].map((o) => (
+        {tabs.map((o) => (
           <button key={o.id} onClick={() => setOption(o.id)} className="flex-1 font-bold"
             style={{ padding: "12px 0", borderRadius: 14, fontSize: 14, background: option === o.id ? C.gold : "rgba(255,255,255,0.07)", color: option === o.id ? C.navy : C.cream }}>
             {o.l}
@@ -1871,8 +1952,11 @@ function ClientPresentation({ quote, settings, onClose }) {
       ) : (
         <div className="px-5 mt-8 text-center">
           <div style={{ fontSize: 12, letterSpacing: "0.12em", color: C.gold, fontWeight: 700, lineHeight: 1.5 }}>PRESTATION DE SERVICE GLOBALE ÉVOLUTIVE<br />FULL OPTIONS</div>
-          <div style={{ ...serif, fontSize: 58, fontWeight: 700, color: C.gold, marginTop: 18, lineHeight: 1 }}>{fmt0(t.mensTotalTTC)}</div>
-          <div style={{ fontSize: 15, color: "rgba(250,247,242,0.7)", marginTop: 6 }}>TTC par mois · engagement {quote.duree} mois</div>
+          <div style={{ ...serif, fontSize: isTrim ? 50 : 58, fontWeight: 700, color: C.gold, marginTop: 18, lineHeight: 1 }}>{fmt0(isTrim ? t.trimestreTTC : t.mensTotalTTC)}</div>
+          <div style={{ fontSize: 15, color: "rgba(250,247,242,0.7)", marginTop: 6 }}>TTC par {isTrim ? "trimestre" : "mois"} · engagement {quote.duree} mois</div>
+          {isTrim && quote.trimestreOffert && (
+            <div style={{ fontSize: 15, color: C.gold, marginTop: 8, fontWeight: 800 }}>🎁 1 trimestre offert — {t.nbTrimestresFactures} trimestres facturés au lieu de {t.nbTrimestres}</div>
+          )}
           {t.abonnementTTC > 0 && (
             <div style={{ fontSize: 14, color: C.gold, marginTop: 10, fontWeight: 700 }}>+ {fmt(t.abonnementTTC)}/mois TTC de télésurveillance (facturée à part)</div>
           )}
