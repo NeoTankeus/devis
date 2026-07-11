@@ -569,7 +569,10 @@ const exportQuotePdf = async (q, settings) => {
         doc.text(e, 72, py + 39 + i * 16);
       });
     }
-  } catch (e) { /* la présentation ne doit jamais empêcher l'export du devis */ }
+  } catch (e) {
+    // La présentation ne doit jamais empêcher l'export du devis, mais on signale le problème
+    try { window.alert("La page de présentation n'a pas pu être générée : " + ((e && e.message) || e) + "\n\nLe devis reste complet et valide. Envoie ce message à ton support pour correction."); } catch (_) { }
+  }
 
   // Pied de page (toutes les pages)
   const pages = doc.getNumberOfPages();
@@ -578,6 +581,7 @@ const exportQuotePdf = async (q, settings) => {
     doc.setFontSize(7.5); doc.setTextColor(...grey); doc.setFont("helvetica", "normal");
     doc.text("FOLONEO EURL — Toulon  ·  04 87 86 01 19  ·  contact@foloneo.fr  ·  www.foloneo.fr", W / 2, 812, { align: "center" });
     doc.text("Le client reste propriétaire de son matériel. Devis établi sous réserve de visite technique.", W / 2, 824, { align: "center" });
+    doc.setFontSize(6); doc.text("v9 · " + i + "/" + pages, W - 30, 824, { align: "right" });
   }
 
   const cleanName = (q.client.nom || "").replace(/[^\wÀ-ÿ-]+/g, "_").slice(0, 30);
@@ -1732,7 +1736,7 @@ function SettingsScreen({ settings, setSettings, onExport, onImport, log }) {
       </section>
 
       <p style={{ fontSize: 12, color: C.grey, textAlign: "center", marginTop: 20 }}>
-        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v8</b> — PDF avec présentation & photos
+        FOLONEO · On veille, vous dormez.<br />Devis Terrain <b>v9</b> — PDF avec présentation & photos
       </p>
     </div>
   );
